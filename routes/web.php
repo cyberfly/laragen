@@ -12,7 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    $fieldTotal = 10;
+    return view('generator.formbuilder',compact('fieldTotal'));
 });
 
 Route::get('/form', function () {

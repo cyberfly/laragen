@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Traits\FieldGenerator;
 
-class CreateFormService{
+class EditFormService{
 
     use FieldGenerator;
 
-    public function generateCreateForm($request)
+    public function generateEditForm($request)
     {
+        $this->setFormType('edit');
         return $this->setInput($request);
     }
 

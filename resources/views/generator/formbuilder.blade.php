@@ -12,16 +12,21 @@
                     <form class="form-inline" action="{{ url('/build') }}" method="POST">
                         {{ csrf_field() }}
 
+                        <div class="form-group">
+                            <label for="">Object Name (singular)</label>
+                            <input type="text" name="object_name" class="form-control"  placeholder="">
+                        </div>
+
                         <input type="hidden" name="fieldTotal" value="{{ $fieldTotal }}">
                         @for ($i=1;$i<=$fieldTotal;$i++)
                         <fieldset>
                             <div class="form-group">
-                                <label for="formlabel">Label</label>
-                                <input type="text" name="fieldLabel_{{ $i }}" class="form-control" id="" placeholder="First Name">
-                            </div>
-                            <div class="form-group">
                                 <label for="exampleInputEmail2">Key</label>
                                 <input type="text" name="fieldKey_{{ $i }}" class="form-control"  placeholder="first_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="formlabel">Label</label>
+                                <input type="text" name="fieldLabel_{{ $i }}" class="form-control" id="" placeholder="First Name">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputEmail2">Field Type</label>

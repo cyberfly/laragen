@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CreateFormService;
+use App\Services\EditFormService;
+use App\Services\CreateResourceControllerService;
 
 class GeneratorController extends Controller
 {
@@ -22,10 +24,12 @@ class GeneratorController extends Controller
 
     private $service;
 
-    public function __construct(CreateFormService $service)
+    public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService)
     {
         $this->middleware('auth');
         $this->CreateFormService = $service;
+        $this->EditFormService = $editFormService;
+        $this->CreateResourceControllerService = $resourceControllerService;
         $this->generateForm = TRUE;
         $this->generateForm = FALSE;
         $this->useRouteName = FALSE;
@@ -44,6 +48,10 @@ class GeneratorController extends Controller
 
         //            generate form
        $createForm = $this->CreateFormService->generateCreateForm(request());
+       $editForm = $this->EditFormService->generateEditForm(request());
+       $objectController = $this->CreateResourceControllerService->generateResourceController(request());
+       $objectModel = $this->EditFormService->generateEditForm(request());
+       $objectMigration = $this->EditFormService->generateEditForm(request());
 
         //            generate migration
 
@@ -52,6 +60,7 @@ class GeneratorController extends Controller
 //            generate trait
 //            generate listing page with search/filter
 
+        return view('generator.generatedcode',compact('createForm','editForm','objectController','objectModel','objectMigration'));
 
     }
 
