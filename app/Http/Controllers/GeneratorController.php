@@ -26,7 +26,7 @@ class GeneratorController extends Controller
 
     public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService)
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
         $this->CreateFormService = $service;
         $this->EditFormService = $editFormService;
         $this->CreateResourceControllerService = $resourceControllerService;

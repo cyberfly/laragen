@@ -15,6 +15,12 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/prism.css') }}" rel="stylesheet">
 
+    <style>
+    .builder_row {
+        margin-bottom: 20px;
+    }
+    </style>
+
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -88,4 +94,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
     <script src="{{ asset('js/prism.js') }}"></script>
 </body>
+@yield('page_script')
 </html>
+
+
