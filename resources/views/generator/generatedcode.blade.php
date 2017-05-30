@@ -19,6 +19,10 @@
                         <li role="presentation"><a href="#formrequest" aria-controls="formrequest" role="tab" data-toggle="tab">Form Request</a></li>
                         <li role="presentation"><a href="#migration" aria-controls="migration" role="tab" data-toggle="tab">Migration</a></li>
                         <li role="presentation"><a href="#route" aria-controls="route" role="tab" data-toggle="tab">Route</a></li>
+                        <li role="presentation"><a href="#api_route" aria-controls="api_route" role="tab" data-toggle="tab">API Route</a></li>
+                        <li role="presentation"><a href="#api_controller" aria-controls="api_controller" role="tab" data-toggle="tab">API Controller</a></li>
+                        <li role="presentation"><a href="#api_createform" aria-controls="api_createform" role="tab" data-toggle="tab">API Create Form</a></li>
+                        <li role="presentation"><a href="#api_editform" aria-controls="api_editform" role="tab" data-toggle="tab">API Edit Form</a></li>
                     </ul>
 
                     <!-- Tab panes -->
@@ -42,6 +46,18 @@
                             <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="route">
+                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="api_route">
+                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="api_controller">
+                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="api_createform">
+                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="api_editform">
                             <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
                         </div>
                     </div>

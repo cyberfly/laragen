@@ -77,9 +77,21 @@ trait ControllerGenerator{
         return $this->controllerCode;
     }
 
-    public function getCompactVariables()
+    public function getCompactVariables($variables='')
     {
+        if (empty($variables)) {
+            return '';
+        }
 
+        $variables = (array)$variables;
+        $variables = "'" .implode("','", $variables) . "'";
+        $compact_variable = str_replace('$', '', $variables);
+
+        if (!empty($compact_variable)) {
+            $compact_variable = ", compact($compact_variable)";
+        }
+
+        return $compact_variable;
     }
 
     public function writeController()
@@ -111,6 +123,8 @@ class '.$this->getControllerName().' extends Controller
 
     private function writeIndexMethod()
     {
+
+
         $indexMethodCode = '
     /**
     * Display a listing of the resource.
@@ -119,8 +133,8 @@ class '.$this->getControllerName().' extends Controller
     */
     public function index()
     {
-        '.$this->getPluralVariable().' = '.$this->getModelName().'::all();
-        return view(\''.$this->getViewsName().'.index\',compact(\''.$this->getPluralVariable().'\'));
+        '.$this->getPluralVariable().' = '.$this->getModelName().'::paginate(20);
+        return view(\''.$this->getViewsName().'.index\''.$this->getCompactVariables($this->getPluralVariable()).');
     }   ';
 
         return $indexMethodCode;
@@ -137,7 +151,7 @@ class '.$this->getControllerName().' extends Controller
     */
     public function create()
     {
-       return view(\''.$this->getViewsName().'.create\');
+       return view(\''.$this->getViewsName().'.create\''.$this->getCompactVariables().');
     }';
 
         return $createMethodCode;
@@ -145,6 +159,9 @@ class '.$this->getControllerName().' extends Controller
 
     private function writeStoreMethod()
     {
+//        var_dump($this->getCreateKeys());
+//        exit;
+
         $storeMethodCode = '
     /**
     * Store a newly created resource in storage.
@@ -154,11 +171,13 @@ class '.$this->getControllerName().' extends Controller
     */
     public function store(Request $request)
     {
-        $brand = new Brand;
-        $brand->name = $request->brand_name;
-        $brand->description = $request->description;
-        $brand->save();
-        
+        '.$this->getSingularVariable().' = new '.$this->getModelName().';'. "\n\t\t";
+
+        foreach ($this->getCreateKeys() as $field_key) {
+            $storeMethodCode .= $this->getSingularVariable().'->'.$field_key.' = $request->'.$field_key.';'. "\n\t\t";
+        }
+
+        $storeMethodCode .= $this->getSingularVariable().'->save();
         
         return redirect();
     }        ';
@@ -178,7 +197,8 @@ class '.$this->getControllerName().' extends Controller
     */
     public function show($id)
     {
-        return view(\''.$this->getViewsName().'.show\');
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
+        $showMethodCode .= 'return view(\''.$this->getViewsName().'.show\''.$this->getCompactVariables($this->getSingularVariable()).');
     }        ';
 
         return $showMethodCode;
@@ -195,7 +215,8 @@ class '.$this->getControllerName().' extends Controller
     */
     public function edit($id)
     {
-        return view(\''.$this->getViewsName().'.edit\');
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
+        $editMethodCode .= 'return view(\''.$this->getViewsName().'.edit\''.$this->getCompactVariables($this->getSingularVariable()).');
     }        ';
 
         return $editMethodCode;
@@ -214,7 +235,15 @@ class '.$this->getControllerName().' extends Controller
     */
     public function update(Request $request, $id)
     {
-        //
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
+
+        foreach ($this->getEditKeys() as $field_key) {
+            $updateMethodCode .= $this->getSingularVariable().'->'.$field_key.' = $request->'.$field_key.';'. "\n\t\t";
+        }
+
+        $updateMethodCode .= $this->getSingularVariable().'->save();
+
+        return redirect();
     }        ';
 
         return $updateMethodCode;
@@ -237,70 +266,5 @@ class '.$this->getControllerName().' extends Controller
 
         return $destroyMethodCode;
     }
-
-    public function setInput($request)
-    {
-//        dd($request);
-        $fieldTotal = $request->fieldTotal;
-
-        $finalCode = $this->formStartWrapper();
-
-        for($i=1;$i<=$fieldTotal;$i++)
-        {
-            $fieldType = 'fieldType_'.$i;
-            $fieldKey = 'fieldKey_'.$i;
-            $fieldLabel = 'fieldLabel_'.$i;
-            $fieldClass = 'fieldClass_'.$i;
-            $fieldPlaceholder = 'fieldPlaceholder_'.$i;
-            $fieldValue = 'fieldValue_'.$i;
-            $showField = 'showField_'.$i;
-
-//            var_dump($fieldType);
-//            var_dump($request->$fieldKey);
-
-//            only process field that match the condition
-            if($this->showFieldInCreateEdit($request->$fieldKey,$request->$showField))
-            {
-                $fieldHtml = $this->getFieldHtml($request->$fieldType,$request->$fieldKey,$request->$fieldLabel,$request->$fieldPlaceholder);
-                $finalCode .= $fieldHtml;
-            }
-        }
-
-        $finalCode .= $this->formEndWrapper();
-
-        return $finalCode;
-
-    }
-
-    //    determine show the field in create/edit form
-
-    private function showFieldInCreateEdit($fieldKey,$showField)
-    {
-        if (empty($fieldKey)) {
-            return FALSE;
-        }
-
-        //do not generate field from create/edit form
-
-        if ($showField==='none') {
-            return FALSE;
-        }
-
-        //do not generate field on create form if field only shown in Edit Form
-
-        if ($showField==='create' && $this->getFormType()=='edit') {
-            return FALSE;
-        }
-
-        //do not generate field on edit form if field only shown in Create Form
-
-        if ($showField==='edit' && $this->getFormType()=='create') {
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-
 
 }

@@ -5,6 +5,9 @@ namespace App\Traits;
 trait FieldGenerator{
 
     private $formType;
+    private $createKeyList;
+    private $editKeyList;
+
 
     public function __construct()
     {
@@ -71,6 +74,34 @@ trait FieldGenerator{
 
     }
 
+    //get list of create key
+
+    public function getCreateKeys()
+    {
+        return $this->createKeyList;
+    }
+
+    //get list of edit key
+
+    public function getEditKeys()
+    {
+        return $this->editKeyList;
+    }
+
+    //store list of create key
+
+    private function setCreateKey($key)
+    {
+        $this->createKeyList[] = $key;
+    }
+
+    //store list of edit key
+
+    private function setEditKey($key)
+    {
+        $this->editKeyList[] = $key;
+    }
+
     //    determine show the field in create/edit form
 
     private function showFieldInCreateEdit($fieldKey,$showField)
@@ -97,6 +128,19 @@ trait FieldGenerator{
             return FALSE;
         }
 
+        //store create/edit key
+
+        if ($showField==='both') {
+            $this->setCreateKey($fieldKey);
+            $this->setEditKey($fieldKey);
+        }
+        else if ($showField === 'create') {
+            $this->setCreateKey($fieldKey);
+        }
+        else if ($showField === 'edit') {
+            $this->setEditKey($fieldKey);
+        }
+
         return TRUE;
     }
 
@@ -114,10 +158,10 @@ trait FieldGenerator{
         switch($fieldType)
         {
             case 'text' && $this->getFormType()==='create':
-                $fieldHtml = '<div class="form-group">
-                                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
-                              </div>';
+$fieldHtml = '<div class="form-group">
+                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
+              </div>';
                 break;
             case 'text' && $this->getFormType()==='edit':
                 $fieldHtml = '<div class="form-group">
@@ -138,10 +182,10 @@ trait FieldGenerator{
                               </div>';
                 break;
             case 'date':
-                $fieldHtml = '<div class="form-group">
-                                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
-                              </div>';
+$fieldHtml = '<div class="form-group">
+                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
+              </div>';
                 break;
             case 'select':
                 break;

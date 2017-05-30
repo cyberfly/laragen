@@ -9,7 +9,9 @@
 
                 <div class="panel-body" id="formbuilder">
 
-                    <form action="">
+                    <form action="/build" method="POST">
+
+                        {{ csrf_field() }}
 
                         <div class="row builder_row">
                             <div class="col-md-2">
@@ -24,13 +26,17 @@
                                 <label for="">Model Name</label>
                                 <input type="text" name="model_name" id="model_name" class="form-control"  placeholder="">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="">View Folder Name</label>
                                 <input type="text" name="view_name" id="view_name" class="form-control"  placeholder="">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Table Name</label>
                                 <input type="text" name="table_name" id="table_name" class="form-control"  placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="">Table PK</label>
+                                <input type="text" name="table_pk" id="table_pk" class="form-control" value="id"  placeholder="">
                             </div>
                             <div class="col-md-4" style="padding-top:25px;">
                                 <button type="submit" class="btn btn-primary">Generate</button>
@@ -48,11 +54,11 @@
                             <div class="row builder_row">
                             <div class="col-md-2">
                                 <label for="">Key</label>
-                                <input type="text" name="fieldKey_{{ $i }}" class="form-control"  placeholder="first_name">
+                                <input type="text" name="fieldKey_{{ $i }}" class="form-control field_key"  placeholder="first_name">
                             </div>
                             <div class="col-md-2">
                                 <label for="formlabel">Label</label>
-                                <input type="text" name="fieldLabel_{{ $i }}" class="form-control" id="" placeholder="First Name">
+                                <input type="text" name="fieldLabel_{{ $i }}" class="form-control field_label" id="" placeholder="First Name">
                             </div>
                             <div class="col-md-2">
                                 <label for="">Field Type</label>
@@ -67,7 +73,7 @@
 
                             <div class="col-md-2">
                                 <label for="">Field Class</label>
-                                <input type="text" name="fieldClass_{{ $i }}" class="form-control"  placeholder="form-control">
+                                <input type="text" name="fieldClass_{{ $i }}" class="form-control"  value="form-control" placeholder="form-control">
                             </div>
 
                             <div class="col-md-2">
@@ -155,6 +161,15 @@
                 var object_name = $(this).val();
                 generateControllerModelViewName(object_name);
             });
+
+            $( ".field_key" ).keyup(function() {
+                var field_key = $(this).val();
+                var label = generateLabelName(field_key);
+            });
+
+            function generateLabelName(field_key) {
+
+            }
 
             //expected output
             //ProductsController.php
