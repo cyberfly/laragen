@@ -9,14 +9,102 @@
 
                 <div class="panel-body" id="formbuilder">
 
-                    <form action="/build" method="POST">
+                    <form action="/connectdb" method="POST">
 
                         {{ csrf_field() }}
+
+                        <!-- Input fields to select database -->
+                        <div class="row builder_row">
+                          <div class="col-md-6">
+                              <label for="">DB_Connection</label>
+                              <input type="text" name="db_connection" id="db_connection" class="form-control"  placeholder="" value="mysql">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="">DB_port</label>
+                              <input type="text" name="db_port" id="db_port" class="form-control"  placeholder="" value="3306">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="">DB_host</label>
+                              <input type="text" name="db_host" id="db_host" class="form-control"  placeholder="127.0.0.1 / localhost" value="127.0.0.1">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="">DB_name</label>
+                              <input type="text" name="db_name" id="db_name" class="form-control"  placeholder="" value="dropzone">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="">DB_username</label>
+                              <input type="text" name="db_username" id="db_username" class="form-control"  placeholder="root" value="root">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="">DB_password</label>
+                              <input type="password" name="db_password" id="db_password" class="form-control"  placeholder="" value="">
+                          </div>
+
+                          <!-- connect_to_db button -->
+                          <div class="col-md-4" style="padding-top:25px;">
+                              <button type="submit" class="btn btn-primary">Connect to DB</button>
+                          </div>
+
+                        </div>
+
+                      </form>
+
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" style="width: 95%">
+                                <span class="sr-only">35% Complete (success)</span>
+                            </div>
+                        </div>
+
+                <form  action="/selectTable" method="POST">
+
+                  {{ csrf_field() }}
+
+                  <div class="row builder_row">
+
+
+                      <?php
+                          $selectStatus = (is_null($selectTable) == true) ? "disabled" : "" ;
+                       ?>
+
+                      <div class="col-md-6">
+                        <label for="sel1">Select list:</label>
+                        <select class="form-control" id="selectTable" name="selectTable" <?php echo $selectStatus ?>>
+                          @if(is_null($selectTable) == true)
+                              <option value="Please configure the database section first">Please configure the database section first</option>
+                            @else
+                            @foreach($selectTable as $table)
+                              <option value="{{ $table }}">{{ $table }}</option>
+                            @endforeach
+                          @endif
+                        </select>
+                      </div>
+
+                      <!-- select and populate table -->
+                      <div class="col-md-4" style="padding-top:25px;">
+                          <button type="submit" class="btn btn-primary">Select Table</button>
+                      </div>
+                  </div>
+
+                </form>
+
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success" style="width: 95%">
+                        <span class="sr-only">35% Complete (success)</span>
+                    </div>
+                </div>
+
+                <form action="/build" method="POST">
+
+                    {{ csrf_field() }}
 
                         <div class="row builder_row">
                             <div class="col-md-2">
                                 <label for="">Object Name (singular)</label>
-                                <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="">
+                                @if(isset($targetTable))
+                                  <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="" value="{{ $targetTable }}">
+                                @else
+                                  <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="">
+                                @endif
                             </div>
                             <div class="col-md-2">
                                 <label for="">Controller Name</label>
@@ -49,22 +137,23 @@
                             </div>
                         </div>
 
-                        @for ($i=1;$i<=$fieldTotal;$i++)
-
-                            <div class="row builder_row">
-                            <div class="col-md-2">
-                                <label for="">Key</label>
-                                <input type="text" name="fieldKey_{{ $i }}" class="form-control field_key"  placeholder="first_name">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="formlabel">Label</label>
-                                <input type="text" name="fieldLabel_{{ $i }}" class="form-control field_label" id="" placeholder="First Name">
-                            </div>
+                        @for ($i=1;$i<$fieldTotal;$i++)
+                          <div class="row builder_row">
+                              <div class="col-md-2">
+                                  <label for="">Key</label>
+                                  <input type="text" name="fieldKey_{{ $i }}" class="form-control field_key"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}" >
+                              </div>
+                              <div class="col-md-2">
+                                  <label for="formlabel">Label</label>
+                                  <input type="text" name="fieldLabel_{{ $i }}" class="form-control field_label" id="" placeholder="First Name" value="{{ $inputName[$i] or ''}}">
+                              </div>
                             <div class="col-md-2">
                                 <label for="">Field Type</label>
                                 <select name="fieldType_{{ $i }}" class="form-control">
+                                    <?php $selectDynamic = (strcmp($inputCheck[$i], "selectDynamic") == 0) ? "selected" : "" ; ?>
                                     <option value="text">Textfield</option>
                                     <option value="select">Dropdown</option>
+                                    <option value="selectDynamic" <?php echo $selectDynamic ?>>Dynamic Dropdown</option>
                                     <option value="checkbox">Checkbox</option>
                                     <option value="radio">Radio</option>
                                     <option value="textarea">Textarea</option>
@@ -78,7 +167,7 @@
 
                             <div class="col-md-2">
                                 <label for="">Field Id</label>
-                                <input type="text" name="fieldId_{{ $i }}" class="form-control"  placeholder="first_name">
+                                <input type="text" name="fieldId_{{ $i }}" class="form-control"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}">
                             </div>
 
                             <div class="col-md-2">
