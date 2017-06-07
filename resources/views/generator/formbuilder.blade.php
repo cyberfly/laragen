@@ -16,6 +16,30 @@
                         <!-- Input fields to select database -->
                         <div class="row builder_row">
                           <div class="col-md-6">
+                            <div class="form-group">
+                            <label for="db_preset">Select DB_Preset:</label>
+                            <select class="form-control" id="db_preset" name="db_preset">
+                              <option>Test 1</option>
+                              <option>Test 2</option>
+                              <option>Test 3</option>
+                              <option>Test 4</option>
+                            </select>
+                            </div>
+                          </div>
+                          <div class="col-md-6" style="padding-top:26px;" >
+                            <label for="">  </label>
+                              <button type="button" class="btn btn-info">Register New DB Preset</button>
+                          </div>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" style="width: 95%">
+                                <span class="sr-only">35% Complete (success)</span>
+                            </div>
+                        </div>
+
+                        <div class="row builder_row">
+                          <div class="col-md-6">
                               <label for="">DB_Connection</label>
                               <input type="text" name="db_connection" id="db_connection" class="form-control"  placeholder="" value="mysql">
                           </div>
@@ -137,7 +161,7 @@
                             </div>
                         </div>
 
-                        @for ($i=1;$i<$fieldTotal;$i++)
+                        @for ($i=0;$i<$fieldTotal;$i++)
                           <div class="row builder_row">
                               <div class="col-md-2">
                                   <label for="">Key</label>

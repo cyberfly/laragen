@@ -77,12 +77,13 @@ class GeneratorController extends Controller
 
         $defaultConnection = Config::get('database.connections');
 
+
         //Set values of default config to the value of request
-        $defaultConnection['mysql']['host'] = $request -> db_host;
-        $defaultConnection['mysql']['port'] = $request -> db_port;
-        $defaultConnection['mysql']['database'] = $request -> db_name;
-        $defaultConnection['mysql']['username'] = $request -> db_username;
-        $defaultConnection['mysql']['password'] = $request -> database_password;
+        $defaultConnection['mysql-mod']['host'] = $request -> db_host;
+        $defaultConnection['mysql-mod']['port'] = $request -> db_port;
+        $defaultConnection['mysql-mod']['database'] = $request -> db_name;
+        $defaultConnection['mysql-mod']['username'] = $request -> db_username;
+        $defaultConnection['mysql-mod']['password'] = $request -> database_password;
 
         //tamper the connection config with the input
         config(['database.connections' => $defaultConnection]);
@@ -95,8 +96,8 @@ class GeneratorController extends Controller
         $fieldTotal = 10;
 
         try {
-            DB::connection()->getPdo();
-            $tables = DB::select('SHOW TABLES');
+            DB::connection('mysql-mod')->getPdo();
+            $tables = DB::connection('mysql-mod')->select('SHOW TABLES');
 
             foreach ($tables as $table) {
               //populate dropdown table input
@@ -118,7 +119,8 @@ class GeneratorController extends Controller
             return view('generator.formbuilder', compact('selectTable', 'fieldTotal', 'inputCheck'));
 
         } catch (\Exception $e) {
-            die("Could not connect to the database.  Please check your configuration.");
+            die($e -> getMessage());
+            //die("Could not connect to the database.  Please check your configuration.");
         }
 
     }
@@ -160,21 +162,21 @@ class GeneratorController extends Controller
 
       $targetTable = $request -> selectTable;
 
-      $tableColumns = DB::select('SHOW COLUMNS FROM ' . $targetTable);
+      $tableColumns = DB::connection('mysql-mod')->select('SHOW COLUMNS FROM ' . $targetTable);
 
       $fieldTotal = sizeof($tableColumns);
 
-      //check for possible input automation selection
+
       foreach ($tableColumns as $tableColumn) {
+
+        //check for possible input automation selection - $inputCheck array
         if (preg_match('/_id$/', $tableColumn -> Field)) {
           array_push($inputCheck, "selectDynamic");
         } else {
           array_push($inputCheck, "");
         }
-      }
 
-      foreach ($tableColumns as $tableColumn) {
-
+        //format label name accordingly - $inputName array
         $name = $tableColumn -> Field;
 
         $label = $this->formatLabelName($name);
