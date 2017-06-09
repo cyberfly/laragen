@@ -20,7 +20,7 @@ class CreateSettingsTable extends Migration
             $table->string('db_host');
             $table->string('db_name');
             $table->string('db_username');
-            $table->string('db_password');
+            $table->text('db_password');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

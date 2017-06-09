@@ -8,6 +8,9 @@ use App\Services\EditFormService;
 use App\Services\CreateResourceControllerService;
 use Config;
 use DB;
+use App\Setting;
+use Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class GeneratorController extends Controller
 {
@@ -115,12 +118,15 @@ class GeneratorController extends Controller
               array_push($inputCheck, "");
             }
 
+            $selectDBs = Setting::where('user_id', Auth::user() -> id) -> get();
 
-            return view('generator.formbuilder', compact('selectTable', 'fieldTotal', 'inputCheck'));
+            flash()->overlay("Successfully connected to '" . $request -> db_name . "''<br>Please proceed by selecting the table of your choice for code generation", 'Success');
+
+            return view('generator.formbuilder', compact('selectDBs', 'selectTable', 'fieldTotal', 'inputCheck'));
 
         } catch (\Exception $e) {
-            die($e -> getMessage());
-            //die("Could not connect to the database.  Please check your configuration.");
+            flash()->overlay($e -> getMessage() . "<br>Please check your preset configuration for '". $request -> db_name . "' database preset", 'Failed');
+            return redirect('/form');
         }
 
     }
@@ -143,6 +149,12 @@ class GeneratorController extends Controller
 
       return $name;
 
+    }
+
+    public function populateTableForm($id) {
+      $selectedSetting = Setting::find($id);
+      $selectedSetting -> db_password = Crypt::decryptString($selectedSetting -> db_password);
+      return json_encode($selectedSetting);
     }
 
     public function populateField(Request $request) {
@@ -188,7 +200,9 @@ class GeneratorController extends Controller
       $request->session()->put('connection', $defaultConnection);
       $request->session()->put('selectTable', $selectTable);
 
-      return view('generator.formbuilder', compact('selectTable','fieldTotal', 'targetTable', 'tableColumns', 'inputCheck', 'inputName'));
+      $selectDBs = Setting::where('user_id', Auth::user() -> id) -> get();
+
+      return view('generator.formbuilder', compact('selectDBs', 'selectTable','fieldTotal', 'targetTable', 'tableColumns', 'inputCheck', 'inputName'));
 
 
     }

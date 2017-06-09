@@ -1,5 +1,7 @@
 <?php
 
+use App\Setting;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,9 +20,11 @@ Route::get('/', function () {
 });
 
 Route::get('/form', function () {
-   
+
       $fieldTotal = 10;
       $selectTable = null;
+
+      $selectDBs = Setting::where('user_id', Auth::user() -> id) -> get();
 
       //boilerplate inputCheck variable
       $inputCheck = array();
@@ -34,8 +38,12 @@ Route::get('/form', function () {
         array_push($inputName, "");
       }
 
-      return view('generator.formbuilder',compact('fieldTotal', 'selectTable', 'inputCheck', 'inputName'));
+      return view('generator.formbuilder',compact('selectDBs', 'fieldTotal', 'selectTable', 'inputCheck', 'inputName'));
 });
+
+Route::get('/populateTableForm/{id}/get', 'GeneratorController@populateTableForm');
+
+Route::resource('settings', 'SettingController');
 
 Route::post('/build', 'GeneratorController@generate');
 

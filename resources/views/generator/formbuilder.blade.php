@@ -2,14 +2,17 @@
 
 @section('content')
 <div class="container-fluid">
+    @include('flash::message')
     <div class="row">
+        <div class="col-md-12">
+        </div>
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">Form Builder</div>
 
                 <div class="panel-body" id="formbuilder">
 
-                    <form action="/connectdb" method="POST">
+                    <form action="/connectdb" method="POST" id="dbPreset">
 
                         {{ csrf_field() }}
 
@@ -19,16 +22,16 @@
                             <div class="form-group">
                             <label for="db_preset">Select DB_Preset:</label>
                             <select class="form-control" id="db_preset" name="db_preset">
-                              <option>Test 1</option>
-                              <option>Test 2</option>
-                              <option>Test 3</option>
-                              <option>Test 4</option>
+                              @if(sizeof($selectDBs) == 0)
+                                <option value="" >Please register datababase preset</option>
+                                @else
+                                <option class="" value="" >Please select a database preset</option>
+                                @foreach($selectDBs as $selectDB)
+                                  <option class="selectDB" value="{{ $selectDB -> id or " " }}"> {{ $selectDB -> db_name}} </option>
+                                @endforeach
+                              @endif
                             </select>
                             </div>
-                          </div>
-                          <div class="col-md-6" style="padding-top:26px;" >
-                            <label for="">  </label>
-                              <button type="button" class="btn btn-info">Register New DB Preset</button>
                           </div>
                         </div>
 
@@ -39,34 +42,48 @@
                         </div>
 
                         <div class="row builder_row">
+                          <div class="col-md-12">
+                            <!-- Error message -->
+                                @if (count($errors) > 0)
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            <!-- Error message -->
+                          </div>
                           <div class="col-md-6">
                               <label for="">DB_Connection</label>
-                              <input type="text" name="db_connection" id="db_connection" class="form-control"  placeholder="" value="mysql">
+                              <input type="text" name="db_connection" id="db_connection" class="form-control"  placeholder="mysql" value="">
                           </div>
                           <div class="col-md-6">
                               <label for="">DB_port</label>
-                              <input type="text" name="db_port" id="db_port" class="form-control"  placeholder="" value="3306">
+                              <input type="text" name="db_port" id="db_port" class="form-control"  placeholder="3306" value="">
                           </div>
                           <div class="col-md-6">
                               <label for="">DB_host</label>
-                              <input type="text" name="db_host" id="db_host" class="form-control"  placeholder="127.0.0.1 / localhost" value="127.0.0.1">
+                              <input type="text" name="db_host" id="db_host" class="form-control"  placeholder="127.0.0.1 / localhost" value="">
                           </div>
                           <div class="col-md-6">
                               <label for="">DB_name</label>
-                              <input type="text" name="db_name" id="db_name" class="form-control"  placeholder="" value="dropzone">
+                              <input type="text" name="db_name" id="db_name" class="form-control"  placeholder="DB_name" value="">
                           </div>
                           <div class="col-md-6">
                               <label for="">DB_username</label>
-                              <input type="text" name="db_username" id="db_username" class="form-control"  placeholder="root" value="root">
+                              <input type="text" name="db_username" id="db_username" class="form-control"  placeholder="root" value="">
                           </div>
                           <div class="col-md-6">
                               <label for="">DB_password</label>
-                              <input type="password" name="db_password" id="db_password" class="form-control"  placeholder="" value="">
+                              <input type="password" name="db_password" id="db_password" class="form-control"  placeholder="secret" value="">
                           </div>
 
-                          <!-- connect_to_db button -->
+                          <!-- connect_to_db button and register_db_preset button -->
                           <div class="col-md-4" style="padding-top:25px;">
-                              <button type="submit" class="btn btn-primary">Connect to DB</button>
+                              <button type="submit" class="btn btn-success">Connect to DB</button>
+                              <button type="submit" class="btn btn-primary" name="storeDbPreset" id="storeDbPreset" style="margin-left:20px;">Register DB Preset</button>
                           </div>
 
                         </div>
@@ -91,7 +108,7 @@
                        ?>
 
                       <div class="col-md-6">
-                        <label for="sel1">Select list:</label>
+                        <label for="selectTable">Select table:</label>
                         <select class="form-control" id="selectTable" name="selectTable" <?php echo $selectStatus ?>>
                           @if(is_null($selectTable) == true)
                               <option value="Please configure the database section first">Please configure the database section first</option>
@@ -269,6 +286,47 @@
 
     <script type="text/javascript">
         $( document ).ready(function() {
+
+            //Modal trigger function
+             $('#flash-overlay-modal').modal();
+
+            //Trigger the function when the page loads
+              var object_name = $("#object_name").val();
+              if(object_name === "") {
+                console.log("object_name is empty");
+              } else if(object_name.endsWith("s")) {
+                object_name = object_name.substring(0, object_name.length - 1);
+                generateControllerModelViewName(object_name);
+              } else {
+                generateControllerModelViewName(object_name);
+              }
+
+            //Will populate the form if selected
+            $('#db_preset').change(function(){
+
+              var setting_id = $( "#db_preset option:selected" ).val();
+
+              // ajax jquery
+              $.get("/populateTableForm/" + setting_id + "/get", function(data){
+                  var JsonObject = JSON.parse(data);
+                  console.log(JsonObject);
+
+                  //Set the input of the database setting form
+                  $('#db_connection').val(JsonObject.db_connection);
+                  $('#db_port').val(JsonObject.db_port);
+                  $('#db_host').val(JsonObject.db_host);
+                  $('#db_name').val(JsonObject.db_name);
+                  $('#db_username').val(JsonObject.db_username);
+                  $('#db_password').val(JsonObject.db_password);
+
+              });
+            })
+
+            //Change the form action to store the DB preset
+            $("#storeDbPreset").on("click", function(e){
+                e.preventDefault();
+                $('#dbPreset').attr('action', "/settings").submit();
+            });
 
             $( "#object_name" ).keyup(function() {
                 var object_name = $(this).val();
