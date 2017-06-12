@@ -48,7 +48,7 @@ trait FieldGenerator{
 
         $finalCode = $this->formStartWrapper();
 
-        for($i=1;$i<=$fieldTotal;$i++)
+        for($i=0;$i<$fieldTotal;$i++)
         {
             $fieldType = 'fieldType_'.$i;
             $fieldKey = 'fieldKey_'.$i;
