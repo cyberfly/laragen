@@ -1,3 +1,32 @@
+
+
 form fieldset{
     margin-bottom: 20px;
+}
+
+#buttonManageDB {
+  color:white;
+  padding:10px;
+  margin-top:2px;
+  margin-left:5px;
+}
+
+#buttonManageDB:hover {
+  color: white;
+  background-color: #A73137;
+  padding:10px;
+  margin-top:2px;
+}
+
+#buttonCodeGenerator {
+  color:white;
+  padding:10px;
+  margin-top:2px;
+}
+
+#buttonCodeGenerator:hover {
+  color: white;
+  background-color: #A3912D;
+  padding:10px;
+  margin-top:2px;
 }

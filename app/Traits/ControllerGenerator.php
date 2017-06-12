@@ -173,12 +173,13 @@ class '.$this->getControllerName().' extends Controller
     {
         '.$this->getSingularVariable().' = new '.$this->getModelName().';'. "\n\t\t";
 
+
         foreach ($this->getCreateKeys() as $field_key) {
             $storeMethodCode .= $this->getSingularVariable().'->'.$field_key.' = $request->'.$field_key.';'. "\n\t\t";
         }
 
         $storeMethodCode .= $this->getSingularVariable().'->save();
-        
+
         return redirect();
     }        ';
 
