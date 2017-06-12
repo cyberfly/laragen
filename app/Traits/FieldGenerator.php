@@ -26,8 +26,9 @@ trait FieldGenerator{
 
     public function formStartWrapper()
     {
-        $formStartWrapper = '<form class="form-horizontal" method="POST" action="" >
-                            ';
+        $formStartWrapper = '<form class="form-horizontal" method="POST" action="{{ route (\'\') }}" >
+    {{ csrf_field() }}
+';
 
         return $formStartWrapper;
     }
@@ -153,15 +154,16 @@ trait FieldGenerator{
 
     private function getFieldHtml(String $fieldType, String $fieldKey, String $fieldLabel, $fieldPlaceholder='')
     {
-        $fieldHtml = '';
+    $fieldHtml = '';
 
         switch($fieldType)
         {
             case 'text' && $this->getFormType()==='create':
-$fieldHtml = '<div class="form-group">
+            $fieldHtml = '<div class="form-group">
                 <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
                 <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
-              </div>';
+              </div>
+              ';
                 break;
             case 'text' && $this->getFormType()==='edit':
                 $fieldHtml = '<div class="form-group">
