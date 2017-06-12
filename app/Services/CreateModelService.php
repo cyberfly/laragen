@@ -4,19 +4,19 @@ namespace App\Services;
 
 use App\Traits\ControllerGenerator;
 use App\Traits\FieldGenerator;
+use App\Traits\GeneratorParameter;
 
 class CreateModelService{
 
 //    use ControllerGenerator;
 //    use FieldGenerator;
-
-    protected $modelName = 'Test';
+    use GeneratorParameter;
+    
     protected $modelCode = '';
 
     public function generateModel($request)
     {
-//        $this->setInput($request);
-//        $this->setControllerParameter($request);
+        $this->setGeneratorParameter($request);
         $this->writeModel();
         return $this->getModel();
     }
@@ -35,11 +35,6 @@ class '.$this->getModelName().' extends Model
     protected $primary_key = "";
     
 }        ';
-    }
-
-    public function getModelName()
-    {
-        return $this->modelName;
     }
 
     private function getModel()

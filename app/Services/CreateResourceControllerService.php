@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Traits\ControllerGenerator;
 use App\Traits\FieldGenerator;
+use App\Traits\GeneratorParameter;
 
 class CreateResourceControllerService{
 
-    use ControllerGenerator;
+    use GeneratorParameter;
     use FieldGenerator;
 
     public function generateResourceController($request)
     {
         $this->setInput($request);
-        $this->setControllerParameter($request);
+        $this->setGeneratorParameter($request);
         $this->writeController();
         return $this->getController();
     }
