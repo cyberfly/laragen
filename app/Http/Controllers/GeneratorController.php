@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CreateModelService;
 use Illuminate\Http\Request;
 use App\Services\CreateFormService;
 use App\Services\EditFormService;
@@ -29,12 +30,13 @@ class GeneratorController extends Controller
 
     private $service;
 
-    public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService)
+    public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService, CreateModelService $createModelService)
     {
-//        $this->middleware('auth');
+        $this->middleware('auth');
         $this->CreateFormService = $service;
         $this->EditFormService = $editFormService;
         $this->CreateResourceControllerService = $resourceControllerService;
+        $this->CreateModelService = $createModelService;
         $this->generateForm = TRUE;
         $this->generateForm = FALSE;
         $this->useRouteName = FALSE;
@@ -56,7 +58,7 @@ class GeneratorController extends Controller
        $createForm = $this->CreateFormService->generateCreateForm(request());
        $editForm = $this->EditFormService->generateEditForm(request());
        $objectController = $this->CreateResourceControllerService->generateResourceController(request());
-       $objectModel = $this->EditFormService->generateEditForm(request());
+       $objectModel = $this->CreateModelService->generateModel(request());
        $objectMigration = $this->EditFormService->generateEditForm(request());
 
         //            generate migration
