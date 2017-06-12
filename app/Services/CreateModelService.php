@@ -11,7 +11,7 @@ class CreateModelService{
 //    use ControllerGenerator;
 //    use FieldGenerator;
     use GeneratorParameter;
-    
+
     protected $modelCode = '';
 
     public function generateModel($request)
@@ -28,11 +28,22 @@ class CreateModelService{
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class '.$this->getModelName().' extends Model
 {
+    use SoftDeletes;
+    
     protected $table = "";
     protected $primary_key = "";
+    
+    protected $fillable = [
+    
+    ];
+    
+    //relationship
+    
+    //scope
     
 }        ';
     }

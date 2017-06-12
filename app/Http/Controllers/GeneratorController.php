@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CreateAPIControllerService;
 use App\Services\CreateModelService;
 use Illuminate\Http\Request;
 use App\Services\CreateFormService;
@@ -30,13 +31,14 @@ class GeneratorController extends Controller
 
     private $service;
 
-    public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService, CreateModelService $createModelService)
+    public function __construct(CreateFormService $service, EditFormService $editFormService, CreateResourceControllerService $resourceControllerService, CreateModelService $createModelService, CreateAPIControllerService $createApiControllerService)
     {
         $this->middleware('auth');
         $this->CreateFormService = $service;
         $this->EditFormService = $editFormService;
         $this->CreateResourceControllerService = $resourceControllerService;
         $this->CreateModelService = $createModelService;
+        $this->CreateAPIControllerService = $createApiControllerService;
         $this->generateForm = TRUE;
         $this->generateForm = FALSE;
         $this->useRouteName = FALSE;
@@ -61,6 +63,9 @@ class GeneratorController extends Controller
        $objectModel = $this->CreateModelService->generateModel(request());
        $objectMigration = $this->EditFormService->generateEditForm(request());
 
+        //generate API
+        $objectAPIController = $this->CreateAPIControllerService->generateAPIController(request());
+
         //            generate migration
 
 //            generate controller
@@ -68,7 +73,7 @@ class GeneratorController extends Controller
 //            generate trait
 //            generate listing page with search/filter
 
-        return view('generator.generatedcode',compact('createForm','editForm','objectController','objectModel','objectMigration'));
+        return view('generator.generatedcode',compact('createForm','editForm','objectController','objectModel','objectMigration','objectAPIController'));
 
     }
 
