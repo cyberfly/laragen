@@ -213,11 +213,12 @@
 
                             <div class="col-md-2">
                                 <label for="">Show In</label>
+
                                 <select name="showField_{{ $i }}" class="form-control">
                                     <option value="both">Create & Edit</option>
                                     <option value="create">Create Only</option>
                                     <option value="edit">Edit Only</option>
-                                    <option value="none">None</option>
+                                    <option value="none" @if(in_array($tableColumns[$i]->Field, $hidden_fields)) selected="selected" @endif >None</option>
                                 </select>
                             </div>
 
@@ -250,10 +251,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-2">
-                                <label for="">Extra Validation Rule</label>
-                                <input type="text" name="fieldExtraValidation_{{ $i }}" class="form-control"  placeholder="">
-                            </div>
+
 
                         </div>
 

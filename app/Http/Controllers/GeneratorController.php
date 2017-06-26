@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CreateAPIControllerService;
+use App\Services\CreateAPIRouteService;
 use App\Services\CreateModelService;
 use App\Services\CreateTransformerService;
 use App\Traits\GeneratorParameter;
@@ -41,7 +42,8 @@ class GeneratorController extends Controller
         CreateResourceControllerService $resourceControllerService,
         CreateModelService $createModelService,
         CreateAPIControllerService $createApiControllerService,
-        CreateTransformerService $createTransformerService
+        CreateTransformerService $createTransformerService,
+        CreateAPIRouteService $createAPIRouteService
     ) {
         $this->middleware('auth');
         $this->CreateFormService = $service;
@@ -50,6 +52,7 @@ class GeneratorController extends Controller
         $this->CreateModelService = $createModelService;
         $this->CreateAPIControllerService = $createApiControllerService;
         $this->CreateTransformerService = $createTransformerService;
+        $this->CreateAPIRouteService = $createAPIRouteService;
         $this->generateForm = true;
         $this->generateForm = false;
         $this->useRouteName = false;
@@ -75,6 +78,10 @@ class GeneratorController extends Controller
 
         $objectAPITransformer = $this->CreateTransformerService->generateTransformer(request());
 
+        //generate API routes
+
+        $objectAPIRoute = $this->CreateAPIRouteService->generateAPIRoute(request());
+
 //        generate form
         $createForm = $this->CreateFormService->generateCreateForm(request());
         $editForm = $this->EditFormService->generateEditForm(request());
@@ -89,7 +96,7 @@ class GeneratorController extends Controller
 
         return view('generator.generatedcode',
             compact('createForm', 'editForm', 'objectController', 'objectModel', 'objectMigration',
-                'objectAPIController','objectAPITransformer'));
+                'objectAPIController','objectAPITransformer', 'objectAPIRoute'));
 
     }
 
@@ -284,9 +291,11 @@ class GeneratorController extends Controller
 
         $selectDBs = Setting::where('user_id', Auth::user()->id)->get();
 
+        $hidden_fields = ['id','created_at','updated_at','deleted_at'];
+
         return view('generator.dbbuilder',
             compact('selectDBs', 'selectTable', 'fieldTotal', 'targetTable', 'tableColumns', 'inputCheck',
-                'inputName','table_parameters'));
+                'inputName','table_parameters', 'hidden_fields'));
 
 
     }

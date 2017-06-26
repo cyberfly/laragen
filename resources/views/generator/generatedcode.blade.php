@@ -44,6 +44,9 @@
                         <div role="tabpanel" class="tab-pane" id="formrequest">
                             <pre class=""><code class="language-php line-numbers">{{ $editForm }}</code></pre>
                         </div>
+                        <div role="tabpanel" class="tab-pane" id="api_route">
+                            <pre class=""><code class="language-php line-numbers">{{ $objectAPIRoute }}</code></pre>
+                        </div>
                         <div role="tabpanel" class="tab-pane" id="createform">
                             <pre class=""><code class="language-html line-numbers">{{ $createForm }}</code></pre>
                         </div>
@@ -60,10 +63,7 @@
                             <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="route">
-                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="api_route">
-                            <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
+                            <pre class=""><code class="language-php line-numbers">{{ $objectAPIRoute }}</code></pre>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="angular_createform">
                             <pre class=""><code class="language-php line-numbers">{{ $objectMigration }}</code></pre>
