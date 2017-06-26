@@ -22,8 +22,11 @@ class CreateAPIControllerService{
     {
         $this->controllerCode = '<?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\StoreMeetingCaseCommitteeReviewRequest;
+use App\Http\Requests\UpdateMeetingCaseCommitteeReviewRequest;
+use App\Transformers\\'.$this->getTransformerName().'();
 use Illuminate\Http\Request;
 
 class '.$this->getControllerName().' extends Controller
@@ -54,7 +57,8 @@ class '.$this->getControllerName().' extends Controller
     public function index()
     {
         '.$this->getPluralVariable().' = '.$this->getModelName().'::paginate(20);
-        return view(\''.$this->getViewsName().'.index\''.$this->getCompactVariables($this->getPluralVariable()).');
+   
+        return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
     }   ';
 
         return $indexMethodCode;
@@ -84,7 +88,7 @@ class '.$this->getControllerName().' extends Controller
 
         $storeMethodCode .= $this->getSingularVariable().'->save();
 
-        return redirect();
+        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'());
     }        ';
 
         return $storeMethodCode;
@@ -103,7 +107,7 @@ class '.$this->getControllerName().' extends Controller
     public function show($id)
     {
         '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
-        $showMethodCode .= 'return view(\''.$this->getViewsName().'.show\''.$this->getCompactVariables($this->getSingularVariable()).');
+        $showMethodCode .= 'return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'());
     }        ';
 
         return $showMethodCode;
@@ -129,7 +133,7 @@ class '.$this->getControllerName().' extends Controller
 
         $updateMethodCode .= $this->getSingularVariable().'->save();
 
-        return redirect();
+        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'())
     }        ';
 
         return $updateMethodCode;
@@ -147,7 +151,11 @@ class '.$this->getControllerName().' extends Controller
     */
     public function destroy($id)
     {
-        return redirect();
+        $this->setResponse(\'messages\', \'record deleted\');
+        $this->setResponse(\'data\', []);
+        $this->setResponse(\'status_code\', 200);
+
+        return $this->response->array($this->getResponse())->setStatusCode(200);
     }        ';
 
         return $destroyMethodCode;
