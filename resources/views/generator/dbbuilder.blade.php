@@ -96,6 +96,8 @@
                             </div>
                         </div>
 
+
+
                 <form  action="/selectTable" method="POST">
 
                   {{ csrf_field() }}
@@ -133,6 +135,10 @@
                         <span class="sr-only">35% Complete (success)</span>
                     </div>
                 </div>
+
+                <!-- start build form -->
+
+                @if(isset($current_steps) && $current_steps!='load_db_connection')
 
                 <form action="/build" method="POST">
 
@@ -272,6 +278,10 @@
                         <input type="hidden" name="fieldTotal" value="{{ $fieldTotal }}">
 
                     </form>
+
+                    @endif
+
+                    <!-- end of build form -->
 
                 </div>
             </div>

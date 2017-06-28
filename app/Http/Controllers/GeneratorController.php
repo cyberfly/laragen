@@ -176,10 +176,14 @@ class GeneratorController extends Controller
 
             $selectDBs = Setting::where('user_id', Auth::user()->id)->get();
 
+            $hidden_fields = [];
+
+            $current_steps = 'load_db_connection';
+
             flash()->overlay("Successfully connected to '" . $request->db_name . "''<br>Please proceed by selecting the table of your choice for code generation",
                 'Success');
 
-            return view('generator.dbbuilder', compact('selectDBs', 'selectTable', 'fieldTotal', 'inputCheck'));
+            return view('generator.dbbuilder', compact('selectDBs', 'selectTable', 'fieldTotal', 'inputCheck', 'tableColumns', 'hidden_fields','current_steps'));
 
         } catch (\Exception $e) {
             flash()->overlay($e->getMessage() . "<br>Please check your preset configuration for '" . $request->db_name . "' database preset",
@@ -293,9 +297,11 @@ class GeneratorController extends Controller
 
         $hidden_fields = ['id','created_at','updated_at','deleted_at'];
 
+        $current_steps = 'select_db_table';
+
         return view('generator.dbbuilder',
             compact('selectDBs', 'selectTable', 'fieldTotal', 'targetTable', 'tableColumns', 'inputCheck',
-                'inputName','table_parameters', 'hidden_fields'));
+                'inputName','table_parameters', 'hidden_fields', 'current_steps'));
 
 
     }
