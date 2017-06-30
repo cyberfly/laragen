@@ -26,8 +26,16 @@ trait FieldGenerator{
 
     public function formStartWrapper()
     {
-        $formStartWrapper = '<form class="form-horizontal" method="POST" action="" >
-                            ';
+        if ($this->getFormType() === 'create') {
+            $formStartWrapper = '<form class="form-horizontal" method="POST" action="{{ route (\'.store\') }}" >
+        {{ csrf_field() }}
+';
+        }
+        else if ($this->getFormType() === 'edit') {
+            $formStartWrapper = '<form class="form-horizontal" method="PUT" action="{{ route (\'.update\') }}" >
+        {{ csrf_field() }}
+';
+        }
 
         return $formStartWrapper;
     }
@@ -153,33 +161,40 @@ trait FieldGenerator{
 
     private function getFieldHtml(String $fieldType, String $fieldKey, String $fieldLabel, $fieldPlaceholder='')
     {
-        $fieldHtml = '';
+    $fieldHtml = '';
 
         switch($fieldType)
         {
             case 'text' && $this->getFormType()==='create':
-$fieldHtml = '<div class="form-group">
-                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
-              </div>';
+                $fieldHtml = '
+        <div class="form-group">
+            <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+            <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
+         </div>
+              ';
                 break;
             case 'text' && $this->getFormType()==='edit':
-                $fieldHtml = '<div class="form-group">
-                                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                                <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\',$'.$fieldKey.') }}" placeholder="'.$fieldPlaceholder.'">
-                              </div>';
+    $fieldHtml = '
+        <div class="form-group">
+            <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+            <input type="text" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\',$'.$fieldKey.') }}" placeholder="'.$fieldPlaceholder.'">
+         </div>
+                  ';
                 break;
             case 'email' && $this->getFormType()==='create':
-                $fieldHtml = '<div class="form-group">
-                                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                                <input type="email" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
-                              </div>';
+                $fieldHtml = '
+        <div class="form-group">
+            <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+            <input type="email" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\') }}" placeholder="'.$fieldPlaceholder.'">
+        </div>';
                 break;
             case 'email' && $this->getFormType()==='edit':
-                $fieldHtml = '<div class="form-group">
-                                <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
-                                <input type="email" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\',$'.$fieldKey.') }}" placeholder="'.$fieldPlaceholder.'">
-                              </div>';
+    $fieldHtml = '
+        <div class="form-group">
+            <label for="'.$fieldKey.'">'.$fieldLabel.'</label>
+            <input type="email" name="'.$fieldKey.'" class="form-control" id="'.$fieldKey.'" value="{{ old(\''.$fieldKey.'\',$'.$fieldKey.') }}" placeholder="'.$fieldPlaceholder.'">
+        </div>
+                  ';
                 break;
             case 'date':
 $fieldHtml = '<div class="form-group">

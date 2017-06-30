@@ -5,12 +5,12 @@ namespace App\Services;
 use App\Traits\FieldGenerator;
 use App\Traits\GeneratorParameter;
 
-class CreateResourceControllerService{
+class CreateAPIControllerService{
 
     use GeneratorParameter;
     use FieldGenerator;
 
-    public function generateResourceController($request)
+    public function generateAPIController($request)
     {
         $this->setInput($request);
         $this->setGeneratorParameter($request);
@@ -30,13 +30,9 @@ class '.$this->getControllerName().' extends Controller
 {
     '.$this->writeIndexMethod().'
 
-    '.$this->writeCreateMethod().'
-
     '.$this->writeStoreMethod().'
 
     '.$this->writeShowMethod().'
-
-    '.$this->writeEditMethod().'
 
     '.$this->writeUpdateMethod().'
 
@@ -63,22 +59,6 @@ class '.$this->getControllerName().' extends Controller
 
         return $indexMethodCode;
 
-    }
-
-    private function writeCreateMethod()
-    {
-        $createMethodCode = '
-    /**
-    * Show the form for creating a new resource.
-    *
-    * @return \Illuminate\Http\Response
-    */
-    public function create()
-    {
-       return view(\''.$this->getViewsName().'.create\''.$this->getCompactVariables().');
-    }';
-
-        return $createMethodCode;
     }
 
     private function writeStoreMethod()
@@ -127,25 +107,6 @@ class '.$this->getControllerName().' extends Controller
     }        ';
 
         return $showMethodCode;
-    }
-
-    private function writeEditMethod()
-    {
-        $editMethodCode = '
-    /**
-    * Show the form for editing the specified resource.
-    *
-    * @param  int  $id
-    * @return \Illuminate\Http\Response
-    */
-    public function edit($id)
-    {
-        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
-        $editMethodCode .= 'return view(\''.$this->getViewsName().'.edit\''.$this->getCompactVariables($this->getSingularVariable()).');
-    }        ';
-
-        return $editMethodCode;
-
     }
 
     private function writeUpdateMethod()

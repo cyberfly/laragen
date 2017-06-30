@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-trait ControllerGenerator{
+trait GeneratorParameter{
 
     private $controllerName;
     private $viewsName;
@@ -11,7 +11,7 @@ trait ControllerGenerator{
     private $singularVariableRecord;
     private $pluralVariableRecord;
 
-    public function setControllerParameter($request)
+    public function setGeneratorParameter($request)
     {
         $object_name = strtolower($request->object_name);
 
@@ -32,19 +32,34 @@ trait ControllerGenerator{
         $this->pluralVariableRecord = '$'.$object_name.'s';
     }
 
-    public function setControllerName($object_name)
+    public function setControllerName($object_name, $controller_name='')
     {
-        $this->controllerName = ucfirst($object_name).'s'.'Controller';
+        if (!empty($controller_name)) {
+            $this->controllerName = $controller_name;
+        }
+        else{
+            $this->controllerName = ucfirst($object_name).'s'.'Controller';
+        }
     }
 
-    public function setViewsName($object_name)
+    public function setViewsName($object_name, $views_name='')
     {
-        $this->viewsName = $object_name.'s';
+        if (!empty($views_name)) {
+            $this->viewsName = $views_name;
+        }
+        else{
+            $this->viewsName = $object_name.'s';
+        }
     }
 
-    public function setModelName($object_name)
+    public function setModelName($object_name, $model_name='')
     {
-        $this->modelName = ucfirst($object_name);
+        if (!empty($model_name)) {
+            $this->modelName = $model_name;
+        }
+        else{
+            $this->modelName = ucfirst($object_name);
+        }
     }
 
     public function getSingularVariable()
