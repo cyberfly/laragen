@@ -26,7 +26,12 @@ trait GeneratorParameter
 
         //get variable name
 
-        $new_table_name = rtrim($table_name, "s ");
+        if ($this->checkSpecialPlural($table_name)) {
+            $new_table_name = str_replace('ies','y',$table_name);
+        }
+        else{
+            $new_table_name = rtrim($table_name, "s ");
+        }
 
         $variable_name = strtolower($new_table_name);
 
@@ -69,8 +74,8 @@ trait GeneratorParameter
         $variable_name = strtolower($new_table_name);
 
         $this->setObjectName($object_name);
-        $this->setSingularVariable($variable_name);
-        $this->setPluralVariable($variable_name);
+        $this->setSingularVariable($variable_name, $request->singular_variable);
+        $this->setPluralVariable($variable_name, $request->plural_variable);
         $this->setControllerName($object_class_name, $request->controller_name);
         $this->setViewsName($variable_name, $request->view_name);
         $this->setModelName($object_class_name, $request->model_name);
@@ -106,7 +111,13 @@ trait GeneratorParameter
         if (!empty($plural_variable_name)) {
             $this->pluralVariableRecord = $plural_variable_name;
         } else {
-            $this->pluralVariableRecord = '$' . $variable_name . 's';
+            if ($this->checkSpecialSingular($variable_name)) {
+                $variable_name = rtrim($variable_name, "y ");
+                $this->pluralVariableRecord = '$' . $variable_name . 'ies';
+            }
+            else {
+                $this->pluralVariableRecord = '$' . $variable_name . 's';
+            }
         }
     }
 
@@ -115,7 +126,7 @@ trait GeneratorParameter
         if (!empty($controller_name)) {
             $this->controllerName = $controller_name;
         } else {
-            $this->controllerName = ucfirst($object_class_name) . 's' . 'Controller';
+            $this->controllerName = ucfirst($object_class_name) . 'Controller';
         }
     }
 
@@ -124,7 +135,14 @@ trait GeneratorParameter
         if (!empty($views_name)) {
             $this->viewsName = $views_name;
         } else {
-            $this->viewsName = $variable_name . 's';
+
+            if ($this->checkSpecialSingular($variable_name)) {
+                $variable_name = rtrim($variable_name, "y ");
+                $this->viewsName = $variable_name . 'ies';
+            }
+            else{
+                $this->viewsName = $variable_name . 's';
+            }
         }
     }
 
@@ -260,5 +278,31 @@ trait GeneratorParameter
         $relationship_name = rtrim($foreign_key, "_id ");
 
         return $relationship_name;
+    }
+
+    //check for ies at the end of table name. eg : categories, agencies
+
+    private function checkSpecialPlural($string)
+    {
+        $check_special_plural = substr($string, -3);
+
+        if ($check_special_plural == 'ies') {
+            return true;
+        }
+
+        return false;
+    }
+
+    //check for y at the end of string name. eg : category
+
+    private function checkSpecialSingular($string)
+    {
+        $check_special_singular = substr($string, -1);
+
+        if ($check_special_singular == 'y') {
+            return true;
+        }
+
+        return false;
     }
 }

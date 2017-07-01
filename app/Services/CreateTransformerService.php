@@ -28,6 +28,7 @@ class CreateTransformerService{
 
 namespace App\Transformers;
 
+use App\\'.$this->getModelName().';
 use League\Fractal\TransformerAbstract;
 
 class '.$this->getTransformerName().' extends TransformerAbstract
@@ -67,10 +68,10 @@ class '.$this->getTransformerName().' extends TransformerAbstract
     {
         return [';
 
-        foreach ($this->getCreateKeys() as $field_key) {
+        foreach ($this->getTransformerKeys() as $field_key) {
             $field_cast = $this->fieldCasting($field_key);
             $transformer_fields_code .= '
-            \''.$field_key.'\' => '.$field_cast.''.$this->getSingularVariable().'->'.$field_key.';'. "";
+            \''.$field_key.'\' => '.$field_cast.''.$this->getSingularVariable().'->'.$field_key.','. "";
         }
 
             $transformer_fields_code .='

@@ -116,7 +116,7 @@
                               <option value="Please configure the database section first">Please configure the database section first</option>
                             @else
                             @foreach($selectTable as $table)
-                              <option value="{{ $table }}">{{ $table }}</option>
+                              <option value="{{ $table }}" @if(isset($table_parameters['table_name']) && $table===$table_parameters['table_name']) selected="selected" @endif >{{ $table }}</option>
                             @endforeach
                           @endif
                         </select>
@@ -170,6 +170,14 @@
                                 <input type="text" name="table_name" id="table_name" class="form-control"  placeholder="" value="{{ $table_parameters['table_name'] or '' }}" >
                             </div>
                             <div class="col-md-2">
+                                <label for="">Single Variable</label>
+                                <input type="text" name="singular_variable" id="singular_variable" class="form-control" value="{{ $table_parameters['singular_variable'] or '' }}"  placeholder="" >
+                            </div>
+                            <div class="col-md-2">
+                                <label for="">Plural Variable</label>
+                                <input type="text" name="plural_variable" id="plural_variable" class="form-control" value="{{ $table_parameters['plural_variable'] or '' }}"  placeholder="" >
+                            </div>
+                            <div class="col-md-2">
                                 <label for="">Table PK</label>
                                 <input type="text" name="table_pk" id="table_pk" class="form-control" value="id"  placeholder="" >
                             </div>
@@ -221,9 +229,13 @@
                                 <label for="">Show In</label>
 
                                 <select name="showField_{{ $i }}" class="form-control">
-                                    <option value="both">Create & Edit</option>
+                                    <option value="create_edit_transformer">Create & Edit & Transformer</option>
+                                    <option value="create_edit">Create & Edit</option>
                                     <option value="create">Create Only</option>
                                     <option value="edit">Edit Only</option>
+                                    <option value="list_transformer">List & Transformer Only</option>
+                                    <option value="transformer" @if(in_array($tableColumns[$i]->Field, $transformer_fields)) selected="selected" @endif >Transformer Only</option>
+                                    <option value="list">List Only</option>
                                     <option value="none" @if(in_array($tableColumns[$i]->Field, $hidden_fields)) selected="selected" @endif >None</option>
                                 </select>
                             </div>
