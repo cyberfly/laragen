@@ -23,7 +23,7 @@ class CreateModelService{
 
     private function writeModel()
     {
-        $this->modelCode = '<?php
+        $modelCode = '<?php
 
 namespace App;
 
@@ -41,11 +41,45 @@ class '.$this->getModelName().' extends Model
     
     ];
     
-    //relationship
+    //belongsTo relationship
     
+    ';
+
+        $modelCode .= $this->writeModelRelationship();
+        
+        $modelCode .='
     //scope
     
 }        ';
+
+        $modelCode .= $this->writeModelScope();
+
+        $this->modelCode = $modelCode;
+    }
+
+    private function writeModelRelationship()
+    {
+        $relationship_code = '';
+
+        $db_relationships = request()->session()->get('db_relationships');
+        $table_relationships = $db_relationships[$this->getTableName()];
+
+        foreach ($table_relationships as $relationship) {
+            $relationship_code .= 'public function '.$relationship['relationship_name'].'(){
+        return $this->'.$relationship['relationship_type'].'('.$relationship['relationship_class'].'::class, \''.$relationship['foreign_key'].'\');
+    }
+    
+    ';
+        }
+
+        return $relationship_code;
+    }
+
+    private function writeModelScope()
+    {
+        $scope_code = '';
+
+        return $scope_code;
     }
 
     private function getModel()

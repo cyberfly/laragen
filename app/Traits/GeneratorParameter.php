@@ -2,7 +2,8 @@
 
 namespace App\Traits;
 
-trait GeneratorParameter{
+trait GeneratorParameter
+{
 
     private $controllerName;
     private $viewsName;
@@ -10,56 +11,156 @@ trait GeneratorParameter{
     private $controllerCode;
     private $singularVariableRecord;
     private $pluralVariableRecord;
+    private $singleTransformer;
+    private $tableName;
+    private $objectName;
+    private $objectClassName;
+
+    //set generator parameters on database load
+
+    public function setDatabaseTableParameter($table_name)
+    {
+        //set table name
+
+        $this->setTableName($table_name);
+
+        //get variable name
+
+        $new_table_name = rtrim($table_name, "s ");
+
+        $variable_name = strtolower($new_table_name);
+
+        //get object name
+
+        $object_name = str_replace('_', ' ', $new_table_name);
+        $object_name = ucwords($object_name);
+
+        //get object class name
+
+        $object_class_name = $this->getObjectClassNameFromTableName($new_table_name);
+
+        $this->setObjectName($object_name);
+        $this->setObjectClassName($object_class_name);
+        $this->setSingularVariable($variable_name);
+        $this->setPluralVariable($variable_name);
+        $this->setControllerName($object_class_name);
+        $this->setViewsName($variable_name);
+        $this->setModelName($object_class_name);
+        $this->setTransformerName();
+    }
+
+    //set final generator parameter on user submit form
 
     public function setGeneratorParameter($request)
     {
-        $object_name = strtolower($request->object_name);
+        $table_name = $request->table_name;
 
-        $this->setSingularVariable($object_name);
-        $this->setPluralVariable($object_name);
-        $this->setControllerName($object_name);
-        $this->setViewsName($object_name);
-        $this->setModelName($object_name);
+        $db_table_parameters = $request->session()->get('db_table_parameters');
+        $table_parameters = $db_table_parameters[$table_name];
+
+        $this->setTableName($table_name);
+
+//        dd($request->all());
+
+        $object_name = $table_parameters['object_name'];
+        $object_class_name = $table_parameters['object_class_name'];
+
+        $new_table_name = rtrim($table_name, "s ");
+        $variable_name = strtolower($new_table_name);
+
+        $this->setObjectName($object_name);
+        $this->setSingularVariable($variable_name);
+        $this->setPluralVariable($variable_name);
+        $this->setControllerName($object_class_name, $request->controller_name);
+        $this->setViewsName($variable_name, $request->view_name);
+        $this->setModelName($object_class_name, $request->model_name);
+        $this->setTransformerName();
     }
 
-    public function setSingularVariable($object_name)
+    public function setTableName($table_name)
     {
-        $this->singularVariableRecord = '$'.$object_name;
+        $this->tableName = $table_name;
     }
 
-    public function setPluralVariable($object_name)
+    public function setObjectName($object_name)
     {
-        $this->pluralVariableRecord = '$'.$object_name.'s';
+        $this->objectName = $object_name;
     }
 
-    public function setControllerName($object_name, $controller_name='')
+    public function setObjectClassName($object_class_name)
+    {
+        $this->objectClassName = $object_class_name;
+    }
+
+    public function setSingularVariable($variable_name, $singular_variable_name='')
+    {
+        if (!empty($singular_variable_name)) {
+            $this->singularVariableRecord = $singular_variable_name;
+        } else {
+            $this->singularVariableRecord = '$' . $variable_name;
+        }
+    }
+
+    public function setPluralVariable($variable_name, $plural_variable_name='')
+    {
+        if (!empty($plural_variable_name)) {
+            $this->pluralVariableRecord = $plural_variable_name;
+        } else {
+            $this->pluralVariableRecord = '$' . $variable_name . 's';
+        }
+    }
+
+    public function setControllerName($object_class_name, $controller_name = '')
     {
         if (!empty($controller_name)) {
             $this->controllerName = $controller_name;
-        }
-        else{
-            $this->controllerName = ucfirst($object_name).'s'.'Controller';
+        } else {
+            $this->controllerName = ucfirst($object_class_name) . 's' . 'Controller';
         }
     }
 
-    public function setViewsName($object_name, $views_name='')
+    public function setViewsName($variable_name, $views_name = '')
     {
         if (!empty($views_name)) {
             $this->viewsName = $views_name;
-        }
-        else{
-            $this->viewsName = $object_name.'s';
+        } else {
+            $this->viewsName = $variable_name . 's';
         }
     }
 
-    public function setModelName($object_name, $model_name='')
+    public function setModelName($object_class_name, $model_name = '')
     {
         if (!empty($model_name)) {
             $this->modelName = $model_name;
+        } else {
+            $this->modelName = ucfirst($object_class_name);
         }
-        else{
-            $this->modelName = ucfirst($object_name);
+    }
+
+    public function setTransformerName($transformer_name = '')
+    {
+        if (!empty($transformer_name)) {
+            $this->singleTransformer = $transformer_name;
+        } else {
+            $this->singleTransformer = $this->getModelName() . 'Transformer';
         }
+    }
+
+    public function getGeneratorParameters()
+    {
+        $generator_parameters = [
+            'table_name' => $this->getTableName(),
+            'object_name' => $this->getObjectName(),
+            'object_class_name' => $this->getObjectClassName(),
+            'singular_variable' => $this->getSingularVariable(),
+            'plural_variable' => $this->getPluralVariable(),
+            'controller_name' => $this->getControllerName(),
+            'model_name' => $this->getModelName(),
+            'transformer_name' => $this->getTransformerName(),
+            'views_folder_name' => $this->getViewsName()
+        ];
+
+        return $generator_parameters;
     }
 
     public function getSingularVariable()
@@ -72,11 +173,6 @@ trait GeneratorParameter{
         return $this->pluralVariableRecord;
     }
 
-    public function getControllerName()
-    {
-        return $this->controllerName;
-    }
-
     public function getViewsName()
     {
         return $this->viewsName;
@@ -87,19 +183,31 @@ trait GeneratorParameter{
         return $this->modelName;
     }
 
+    public function getControllerName()
+    {
+        return $this->controllerName;
+    }
+
+    //get controller code for Create API Service
+
     public function getController()
     {
         return $this->controllerCode;
     }
 
-    public function getCompactVariables($variables='')
+    public function getTransformerName()
+    {
+        return $this->singleTransformer;
+    }
+
+    public function getCompactVariables($variables = '')
     {
         if (empty($variables)) {
             return '';
         }
 
         $variables = (array)$variables;
-        $variables = "'" .implode("','", $variables) . "'";
+        $variables = "'" . implode("','", $variables) . "'";
         $compact_variable = str_replace('$', '', $variables);
 
         if (!empty($compact_variable)) {
@@ -109,6 +217,48 @@ trait GeneratorParameter{
         return $compact_variable;
     }
 
-    
+    public function getTableName()
+    {
+        return $this->tableName;
+    }
 
+    public function getObjectName()
+    {
+        return $this->objectName;
+    }
+
+    public function getObjectClassName()
+    {
+        return $this->objectClassName;
+    }
+
+    private function getObjectClassNameFromTableName($table_name)
+    {
+        //get object class name
+
+        $object_class_name = '';
+
+        $exp_table_name = explode('_', $table_name);
+
+        foreach ($exp_table_name as $value) {
+            $object_class_name .= ucfirst($value);
+        }
+
+        return $object_class_name;
+    }
+
+    public function getRelationshipClass($foreign_key)
+    {
+        $new_table_name = rtrim($foreign_key, "_id ");
+        $relationship_class = $this->getObjectClassNameFromTableName($new_table_name);
+
+        return $relationship_class;
+    }
+
+    public function getRelationshipName($foreign_key)
+    {
+        $relationship_name = rtrim($foreign_key, "_id ");
+
+        return $relationship_name;
+    }
 }
