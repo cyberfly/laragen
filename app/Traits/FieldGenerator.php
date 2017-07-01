@@ -7,6 +7,7 @@ trait FieldGenerator{
     private $formType;
     private $createKeyList;
     private $editKeyList;
+    private $transformerKeyList;
 
 
     public function __construct()
@@ -96,6 +97,13 @@ trait FieldGenerator{
         return $this->editKeyList;
     }
 
+    //get list of transformer key
+
+    public function getTransformerKeys()
+    {
+        return $this->transformerKeyList;
+    }
+
     //store list of create key
 
     private function setCreateKey($key)
@@ -108,6 +116,13 @@ trait FieldGenerator{
     private function setEditKey($key)
     {
         $this->editKeyList[] = $key;
+    }
+
+    //store list of transformer key
+
+    private function setTransformerKey($key)
+    {
+        $this->transformerKeyList[] = $key;
     }
 
     //    determine show the field in create/edit form
@@ -138,7 +153,12 @@ trait FieldGenerator{
 
         //store create/edit key
 
-        if ($showField==='both') {
+        if ($showField==='create_edit_transformer') {
+            $this->setCreateKey($fieldKey);
+            $this->setEditKey($fieldKey);
+            $this->setTransformerKey($fieldKey);
+        }
+        else if ($showField==='create_edit') {
             $this->setCreateKey($fieldKey);
             $this->setEditKey($fieldKey);
         }
@@ -147,6 +167,9 @@ trait FieldGenerator{
         }
         else if ($showField === 'edit') {
             $this->setEditKey($fieldKey);
+        }
+        else if ($showField === 'transformer') {
+            $this->setTransformerKey($fieldKey);
         }
 
         return TRUE;

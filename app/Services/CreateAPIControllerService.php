@@ -24,12 +24,11 @@ class CreateAPIControllerService{
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\StoreMeetingCaseCommitteeReviewRequest;
-use App\Http\Requests\UpdateMeetingCaseCommitteeReviewRequest;
-use App\Transformers\\'.$this->getTransformerName().'();
+use App\\'.$this->getModelName().';
+use App\Transformers\\'.$this->getTransformerName().';
 use Illuminate\Http\Request;
 
-class '.$this->getControllerName().' extends Controller
+class '.$this->getControllerName().' extends BaseController
 {
     '.$this->writeIndexMethod().'
 
@@ -54,9 +53,36 @@ class '.$this->getControllerName().' extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function index()
+    public function index(Request $request)
     {
-        '.$this->getPluralVariable().' = '.$this->getModelName().'::paginate(20);
+        '.$this->getPluralVariable().' = new '.$this->getModelName().';
+        ';
+
+        $indexMethodCode .= '
+        if(!empty($request->sort)) {
+            
+            $sort_by = substr($request->sort, 0, 1);
+            
+            if($sort_by===\'-\') {
+                $sort_by = \'asc\';
+            }
+            else {
+                $sort_by = \'desc\';
+            }
+            
+            $sort_by_column = ltrim($request->sort, "- ");
+            
+            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy($sort_by_column,$sort_by);
+        }
+        else {
+            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy(\'created_at\',\'desc\');
+        }
+        
+        ';
+
+        $indexMethodCode .= $this->getPluralVariable().' = '.$this->getPluralVariable().'->paginate(50);';
+
+        $indexMethodCode .= '
    
         return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
     }   ';
@@ -67,9 +93,6 @@ class '.$this->getControllerName().' extends Controller
 
     private function writeStoreMethod()
     {
-//        var_dump($this->getCreateKeys());
-//        exit;
-
         $storeMethodCode = '
     /**
     * Store a newly created resource in storage.
@@ -88,7 +111,7 @@ class '.$this->getControllerName().' extends Controller
 
         $storeMethodCode .= $this->getSingularVariable().'->save();
 
-        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'());
+        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'())->setStatusCode(201);
     }        ';
 
         return $storeMethodCode;
@@ -106,7 +129,15 @@ class '.$this->getControllerName().' extends Controller
     */
     public function show($id)
     {
-        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::find($id);'. "\n\t\t";
+
+        $showMethodCode .= '
+        if(!'.$this->getSingularVariable().') {
+            throw new NotFoundHttpException;
+        }
+            
+        ';
+
         $showMethodCode .= 'return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'());
     }        ';
 
@@ -125,7 +156,14 @@ class '.$this->getControllerName().' extends Controller
     */
     public function update(Request $request, $id)
     {
-        '.$this->getSingularVariable().' = '.$this->getModelName().'::findOrFail($id);'. "\n\t\t";
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::find($id);'. "\n\t\t";
+
+        $updateMethodCode .= '
+        if(!'.$this->getSingularVariable().') {
+            throw new NotFoundHttpException;
+        }
+            
+        ';
 
         foreach ($this->getEditKeys() as $field_key) {
             $updateMethodCode .= $this->getSingularVariable().'->'.$field_key.' = $request->'.$field_key.';'. "\n\t\t";
@@ -133,7 +171,7 @@ class '.$this->getControllerName().' extends Controller
 
         $updateMethodCode .= $this->getSingularVariable().'->save();
 
-        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'())
+        return $this->response->item('.$this->getSingularVariable().', new '.$this->getTransformerName().'());
     }        ';
 
         return $updateMethodCode;
@@ -151,11 +189,21 @@ class '.$this->getControllerName().' extends Controller
     */
     public function destroy($id)
     {
-        $this->setResponse(\'messages\', \'record deleted\');
-        $this->setResponse(\'data\', []);
-        $this->setResponse(\'status_code\', 200);
+        '.$this->getSingularVariable().' = '.$this->getModelName().'::find($id);'. "\n\t\t";
 
-        return $this->response->array($this->getResponse())->setStatusCode(200);
+        $destroyMethodCode .= '
+        if(!'.$this->getSingularVariable().') {
+            throw new NotFoundHttpException;
+        }
+            
+        ';
+
+        $destroyMethodCode .= 'if('.$this->getSingularVariable().'->delete()) {
+            return $this->response->noContent();
+        }    
+        else {
+            return $this->response->error(\'could_not_delete_item\', 500);
+        }       
     }        ';
 
         return $destroyMethodCode;
