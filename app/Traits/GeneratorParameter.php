@@ -277,6 +277,8 @@ trait GeneratorParameter
     {
         $relationship_name = rtrim($foreign_key, "_id ");
 
+        $relationship_name = lcfirst(implode('', array_map('ucfirst', explode('_', $relationship_name))));
+
         return $relationship_name;
     }
 

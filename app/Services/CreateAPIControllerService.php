@@ -72,10 +72,10 @@ class '.$this->getControllerName().' extends BaseController
             
             $sort_by_column = ltrim($request->sort, "- ");
             
-            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy($sort_by_column,$sort_by);
+            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy($sort_by_column, $sort_by);
         }
         else {
-            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy(\'created_at\',\'desc\');
+            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy(\'created_at\', \'desc\');
         }
         
         ';
@@ -133,7 +133,7 @@ class '.$this->getControllerName().' extends BaseController
 
         $showMethodCode .= '
         if(!'.$this->getSingularVariable().') {
-            throw new NotFoundHttpException;
+            return $this->response->errorNotFound();
         }
             
         ';
@@ -160,7 +160,7 @@ class '.$this->getControllerName().' extends BaseController
 
         $updateMethodCode .= '
         if(!'.$this->getSingularVariable().') {
-            throw new NotFoundHttpException;
+            return $this->response->errorNotFound();
         }
             
         ';
@@ -193,17 +193,15 @@ class '.$this->getControllerName().' extends BaseController
 
         $destroyMethodCode .= '
         if(!'.$this->getSingularVariable().') {
-            throw new NotFoundHttpException;
+            return $this->response->errorNotFound();
         }
             
         ';
 
-        $destroyMethodCode .= 'if('.$this->getSingularVariable().'->delete()) {
-            return $this->response->noContent();
-        }    
-        else {
-            return $this->response->error(\'could_not_delete_item\', 500);
-        }       
+        $destroyMethodCode .= $this->getSingularVariable().'->delete();
+            
+        return $this->response->noContent();
+                  
     }        ';
 
         return $destroyMethodCode;

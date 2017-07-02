@@ -42,7 +42,7 @@
                             <pre class=""><code class="language-php line-numbers">{{ $objectModel}}</code></pre>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="formrequest">
-                            <pre class=""><code class="language-php line-numbers">{{ $editForm }}</code></pre>
+                            <pre class=""><code class="language-php line-numbers">{{ $objectFormRequest }}</code></pre>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="api_route">
                             <pre class=""><code class="language-php line-numbers">{{ $objectAPIRoute }}</code></pre>

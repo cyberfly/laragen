@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CreateAPIControllerService;
 use App\Services\CreateAPIRouteService;
+use App\Services\CreateFormRequestService;
 use App\Services\CreateModelService;
 use App\Services\CreateTransformerService;
 use App\Traits\GeneratorParameter;
@@ -43,7 +44,8 @@ class GeneratorController extends Controller
         CreateModelService $createModelService,
         CreateAPIControllerService $createApiControllerService,
         CreateTransformerService $createTransformerService,
-        CreateAPIRouteService $createAPIRouteService
+        CreateAPIRouteService $createAPIRouteService,
+    CreateFormRequestService $createFormRequestService
     ) {
         $this->middleware('auth');
         $this->CreateFormService = $service;
@@ -53,6 +55,7 @@ class GeneratorController extends Controller
         $this->CreateAPIControllerService = $createApiControllerService;
         $this->CreateTransformerService = $createTransformerService;
         $this->CreateAPIRouteService = $createAPIRouteService;
+        $this->CreateFormRequestService = $createFormRequestService;
         $this->generateForm = true;
         $this->generateForm = false;
         $this->useRouteName = false;
@@ -71,32 +74,40 @@ class GeneratorController extends Controller
         //generate API
         $objectAPIController = $this->CreateAPIControllerService->generateAPIController(request());
 
-        //            generate model with relationship, scope
+        //generate model with relationship, scope
         $objectModel = $this->CreateModelService->generateModel(request());
 
         //generate API transformer
 
         $objectAPITransformer = $this->CreateTransformerService->generateTransformer(request());
 
+        //generate Form Request class
+
+        $objectFormRequest = $this->CreateFormRequestService->generateTransformer(request());
+
         //generate API routes
 
         $objectAPIRoute = $this->CreateAPIRouteService->generateAPIRoute(request());
 
-//        generate form
+        //generate form
+
         $createForm = $this->CreateFormService->generateCreateForm(request());
         $editForm = $this->EditFormService->generateEditForm(request());
-//            generate controller
+
+        //generate controller
+
         $objectController = $this->CreateResourceControllerService->generateResourceController(request());
         $objectMigration = $this->EditFormService->generateEditForm(request());
 
-//                    generate migration
+         //generate migration
 
-//            generate trait
-//            generate listing page with search/filter
+         //generate trait
+
+        //generate listing page with search/filter
 
         return view('generator.generatedcode',
             compact('createForm', 'editForm', 'objectController', 'objectModel', 'objectMigration',
-                'objectAPIController','objectAPITransformer', 'objectAPIRoute'));
+                'objectAPIController','objectAPITransformer', 'objectAPIRoute', 'objectFormRequest'));
 
     }
 
