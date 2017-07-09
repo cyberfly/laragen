@@ -15,6 +15,7 @@ trait GeneratorParameter
     private $tableName;
     private $objectName;
     private $objectClassName;
+    private $apiRouteName;
 
     //set generator parameters on database load
 
@@ -52,6 +53,7 @@ trait GeneratorParameter
         $this->setViewsName($variable_name);
         $this->setModelName($object_class_name);
         $this->setTransformerName();
+        $this->setAPIRouteName($new_table_name);
     }
 
     //set final generator parameter on user submit form
@@ -95,6 +97,27 @@ trait GeneratorParameter
     public function setObjectClassName($object_class_name)
     {
         $this->objectClassName = $object_class_name;
+    }
+
+    public function setAPIRouteName($new_table_name)
+    {
+        $exp_table_name = explode('_', $new_table_name);
+
+        $this->apiRouteName = $new_table_name.'/{'.$new_table_name.'_id}';
+
+        if (!empty($exp_table_name)) {
+
+            if (sizeof($exp_table_name)===2) {
+
+                $this->apiRouteName = $exp_table_name[0].'/{'.$exp_table_name[0].'_id}/'.$exp_table_name[1].'/{'.$exp_table_name[1].'_id}';
+
+            }
+            else if (sizeof($exp_table_name)===3) {
+
+                $this->apiRouteName = $exp_table_name[1].'/{'.$exp_table_name[1].'_id}/'.$exp_table_name[2].'/{'.$exp_table_name[2].'_id}';
+            }
+
+        }
     }
 
     public function setSingularVariable($variable_name, $singular_variable_name='')
@@ -175,7 +198,8 @@ trait GeneratorParameter
             'controller_name' => $this->getControllerName(),
             'model_name' => $this->getModelName(),
             'transformer_name' => $this->getTransformerName(),
-            'views_folder_name' => $this->getViewsName()
+            'views_folder_name' => $this->getViewsName(),
+            'api_route_name' => $this->getAPIRouteName(),
         ];
 
         return $generator_parameters;
@@ -204,6 +228,11 @@ trait GeneratorParameter
     public function getControllerName()
     {
         return $this->controllerName;
+    }
+
+    public function getAPIRouteName()
+    {
+        return $this->apiRouteName;
     }
 
     //get controller code for Create API Service

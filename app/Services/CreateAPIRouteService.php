@@ -24,11 +24,14 @@ class CreateAPIRouteService{
     private function writeAPIRoute()
     {
         $apiRoute = '
-        $api->get(\'meeting/{meeting_id}/timer\',\'MeetingTimerController@show\');
-        //start a meeting timer manually
-        $api->post(\'meeting/{meeting_id}/timer\',\'MeetingTimerController@store\');
-        //stop a meeting timer manually
-        $api->put(\'meeting/{meeting_id}/timer\',\'MeetingTimerController@update\');
+        //get list of meeting agenda
+        $api->get(\'meeting/{meeting_id}/agenda\',\''.$this->getControllerName().'@index\');
+        //store a meeting agenda
+        $api->post(\'meeting/{meeting_id}/agenda\',\''.$this->getControllerName().'@store\');
+        //update a meeting agenda
+        $api->put(\'meeting/{meeting_id}/agenda/{agenda_id}\',\''.$this->getControllerName().'@update\');
+        //show specific meeting agenda
+        $api->get(\'meeting/{meeting_id}/agenda/{agenda_id}\',\''.$this->getControllerName().'@show\');
         ';
 
         $this->apiRoute = $apiRoute;

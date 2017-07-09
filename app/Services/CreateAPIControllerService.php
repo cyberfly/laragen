@@ -78,12 +78,16 @@ class '.$this->getControllerName().' extends BaseController
             '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy(\'created_at\', \'desc\');
         }
         
+        $limit = $request->limit;
+        
         ';
 
-        $indexMethodCode .= $this->getPluralVariable().' = '.$this->getPluralVariable().'->paginate(50);';
+        $indexMethodCode .= $this->getPluralVariable().' = '.$this->getPluralVariable().'->paginate($limit, 50);';
 
         $indexMethodCode .= '
-   
+        
+        '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->appends($request->except(\'page\'));
+        
         return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
     }   ';
 

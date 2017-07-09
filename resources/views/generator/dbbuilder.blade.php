@@ -8,7 +8,7 @@
         </div>
         <div class="col-md-12">
             <div class="panel panel-primary">
-                <div class="panel-heading">Form Builder</div>
+                <div class="panel-heading">Database Builder</div>
 
                 <div class="panel-body" id="formbuilder">
 
@@ -144,146 +144,166 @@
 
                     {{ csrf_field() }}
 
-                        <div class="row builder_row">
-                            <div class="col-md-3">
-                                <label for="">Object Name (singular)</label>
-                                <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="" value="{{ $table_parameters['object_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-3">
-                                <label for="">Controller Name</label>
-                                <input type="text" name="controller_name" id="controller_name" class="form-control"  placeholder="" value="{{ $table_parameters['controller_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-3">
-                                <label for="">Model Name</label>
-                                <input type="text" name="model_name" id="model_name" class="form-control"  placeholder="" value="{{ $table_parameters['model_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-3">
-                                <label for="">Transformer Name</label>
-                                <input type="text" name="transformer_name" id="transformer_name" class="form-control"  placeholder="" value="{{ $table_parameters['transformer_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">View Folder Name</label>
-                                <input type="text" name="view_name" id="view_name" class="form-control"  placeholder="" value="{{ $table_parameters['views_folder_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Table Name</label>
-                                <input type="text" name="table_name" id="table_name" class="form-control"  placeholder="" value="{{ $table_parameters['table_name'] or '' }}" >
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Single Variable</label>
-                                <input type="text" name="singular_variable" id="singular_variable" class="form-control" value="{{ $table_parameters['singular_variable'] or '' }}"  placeholder="" >
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Plural Variable</label>
-                                <input type="text" name="plural_variable" id="plural_variable" class="form-control" value="{{ $table_parameters['plural_variable'] or '' }}"  placeholder="" >
-                            </div>
-                            <div class="col-md-2">
-                                <label for="">Table PK</label>
-                                <input type="text" name="table_pk" id="table_pk" class="form-control" value="id"  placeholder="" >
-                            </div>
-                            <div class="col-md-4" style="padding-top:25px;">
-                                <button type="submit" class="btn btn-primary">Generate</button>
-                            </div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">General Code Attribute</h3>
                         </div>
+                        <div class="panel-body">
+                            <div class="row builder_row">
+                                <div class="col-md-10">
+                                    <div class="col-md-3">
+                                        <label for="">Object Name (singular)</label>
+                                        <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="" value="{{ $table_parameters['object_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="">Controller Name</label>
+                                        <input type="text" name="controller_name" id="controller_name" class="form-control"  placeholder="" value="{{ $table_parameters['controller_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="">API Route</label>
+                                        <input type="text" name="api_route_name" id="api_route_name" class="form-control" value="{{ $table_parameters['api_route_name'] or '' }}"  placeholder="" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Model Name</label>
+                                        <input type="text" name="model_name" id="model_name" class="form-control"  placeholder="" value="{{ $table_parameters['model_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="">Transformer Name</label>
+                                        <input type="text" name="transformer_name" id="transformer_name" class="form-control"  placeholder="" value="{{ $table_parameters['transformer_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">View Folder Name</label>
+                                        <input type="text" name="view_name" id="view_name" class="form-control"  placeholder="" value="{{ $table_parameters['views_folder_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Table Name</label>
+                                        <input type="text" name="table_name" id="table_name" class="form-control"  placeholder="" value="{{ $table_parameters['table_name'] or '' }}" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Single Variable</label>
+                                        <input type="text" name="singular_variable" id="singular_variable" class="form-control" value="{{ $table_parameters['singular_variable'] or '' }}"  placeholder="" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Plural Variable</label>
+                                        <input type="text" name="plural_variable" id="plural_variable" class="form-control" value="{{ $table_parameters['plural_variable'] or '' }}"  placeholder="" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Table PK</label>
+                                        <input type="text" name="table_pk" id="table_pk" class="form-control" value="id"  placeholder="" >
+                                    </div>
+                                    <div class="col-md-4" style="padding-top:25px;">
+                                        {{--<button type="submit" class="btn btn-primary">Generate</button>--}}
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="btn-group-vertical" role="group" aria-label="...">
+                                        <button type="submit" class="btn btn-primary btn-lg">Generate</button>
+                                        <button type="submit" class="btn btn-success btn-lg">Generate</button>
+                                        <button type="submit" class="btn btn-warning btn-lg">Generate</button>
+                                    </div>
+                                </div>
 
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-warning" style="width: 95%">
-                                <span class="sr-only">35% Complete (success)</span>
                             </div>
                         </div>
+                    </div>
 
                         @for ($i=0;$i<$fieldTotal;$i++)
-                          <div class="row builder_row">
-                              <div class="col-md-2">
-                                  <label for="">Key</label>
-                                  <input type="text" name="fieldKey_{{ $i }}" class="form-control field_key"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}" >
-                              </div>
-                              <div class="col-md-2">
-                                  <label for="formlabel">Label</label>
-                                  <input type="text" name="fieldLabel_{{ $i }}" class="form-control field_label" id="" placeholder="First Name" value="{{ $inputName[$i] or ''}}">
-                              </div>
-                            <div class="col-md-2">
-                                <label for="">Field Type</label>
-                                <select name="fieldType_{{ $i }}" class="form-control">
-                                    <?php $selectDynamic = (strcmp($inputCheck[$i], "selectDynamic") == 0) ? "selected" : "" ; ?>
-                                    <option value="text">Textfield</option>
-                                    <option value="select">Dropdown</option>
-                                    <option value="selectDynamic" <?php echo $selectDynamic ?>>Dynamic Dropdown</option>
-                                    <option value="checkbox">Checkbox</option>
-                                    <option value="radio">Radio</option>
-                                    <option value="textarea">Textarea</option>
-                                </select>
+
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Database Field : <button class="btn btn-primary" type="button">
+                                        {{ $tableColumns[$i] -> Field or ''}}
+                                    </button></h3>
                             </div>
+                            <div class="panel-body">
+                                <div class="row builder_row">
+                                    <div class="col-md-2">
+                                        <label for="">Key</label>
+                                        <input type="text" name="fieldKey_{{ $i }}" class="form-control field_key"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}" >
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="formlabel">Label</label>
+                                        <input type="text" name="fieldLabel_{{ $i }}" class="form-control field_label" id="" placeholder="First Name" value="{{ $inputName[$i] or ''}}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="">Field Type</label>
+                                        <select name="fieldType_{{ $i }}" class="form-control">
+                                            <?php $selectDynamic = (strcmp($inputCheck[$i], "selectDynamic") == 0) ? "selected" : "" ; ?>
+                                            <option value="text">Textfield</option>
+                                            <option value="select">Dropdown</option>
+                                            <option value="selectDynamic" <?php echo $selectDynamic ?>>Dynamic Dropdown</option>
+                                            <option value="checkbox">Checkbox</option>
+                                            <option value="radio">Radio</option>
+                                            <option value="textarea">Textarea</option>
+                                        </select>
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Field Class</label>
-                                <input type="text" name="fieldClass_{{ $i }}" class="form-control"  value="form-control" placeholder="form-control">
-                            </div>
+                                    <div class="col-md-2">
+                                        <label for="">Field Class</label>
+                                        <input type="text" name="fieldClass_{{ $i }}" class="form-control"  value="form-control" placeholder="form-control">
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Field Id</label>
-                                <input type="text" name="fieldId_{{ $i }}" class="form-control"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}">
-                            </div>
+                                    <div class="col-md-2">
+                                        <label for="">Field Id</label>
+                                        <input type="text" name="fieldId_{{ $i }}" class="form-control"  placeholder="first_name" value="{{ $tableColumns[$i] -> Field or ''}}">
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Show In</label>
+                                    <div class="col-md-2">
+                                        <label for="">Show In</label>
 
-                                <select name="showField_{{ $i }}" class="form-control">
-                                    <option value="create_edit_transformer">Create & Edit & Transformer</option>
-                                    <option value="create_edit">Create & Edit</option>
-                                    <option value="create">Create Only</option>
-                                    <option value="edit">Edit Only</option>
-                                    <option value="list_transformer">List & Transformer Only</option>
-                                    <option value="transformer" @if(in_array($tableColumns[$i]->Field, $transformer_fields)) selected="selected" @endif >Transformer Only</option>
-                                    <option value="list">List Only</option>
-                                    <option value="none" @if(in_array($tableColumns[$i]->Field, $hidden_fields)) selected="selected" @endif >None</option>
-                                </select>
-                            </div>
+                                        <select name="showField_{{ $i }}" class="form-control">
+                                            <option value="create_edit_transformer">Create & Edit & Transformer</option>
+                                            <option value="create_edit">Create & Edit</option>
+                                            <option value="create">Create Only</option>
+                                            <option value="edit">Edit Only</option>
+                                            <option value="list_transformer">List & Transformer Only</option>
+                                            <option value="transformer" @if(in_array($tableColumns[$i]->Field, $transformer_fields)) selected="selected" @endif >Transformer Only</option>
+                                            <option value="list">List Only</option>
+                                            <option value="none" @if(in_array($tableColumns[$i]->Field, $hidden_fields)) selected="selected" @endif >None</option>
+                                        </select>
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Relationship</label>
-                                <input type="text" name="fieldRelationship_{{ $i }}" class="form-control"  placeholder="relationship name">
-                                <input type="text" name="fieldRelationshipModel_{{ $i }}" class="form-control"  placeholder="relationship model name">
-                                <input type="text" name="fieldRelationshipFK_{{ $i }}" class="form-control"  placeholder="relationship key">
-                            </div>
+                                    <div class="col-md-2">
+                                        <label for="">Relationship</label>
+                                        <input type="text" name="fieldRelationship_{{ $i }}" class="form-control"  placeholder="relationship name">
+                                        <input type="text" name="fieldRelationshipModel_{{ $i }}" class="form-control"  placeholder="relationship model name">
+                                        <input type="text" name="fieldRelationshipFK_{{ $i }}" class="form-control"  placeholder="relationship key">
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Value</label>
-                                <input type="text" name="fieldValue_{{ $i }}" class="form-control"  placeholder="">
-                            </div>
+                                    <div class="col-md-2">
+                                        <label for="">Value</label>
+                                        <input type="text" name="fieldValue_{{ $i }}" class="form-control"  placeholder="">
+                                    </div>
 
-                            <div class="col-md-2">
-                                <label for="">Placeholder</label>
-                                <input type="text" name="fieldPlaceholder_{{ $i }}" class="form-control"  placeholder="John Doe">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="">Validation</label>
-                                <div>
+                                    <div class="col-md-2">
+                                        <label for="">Placeholder</label>
+                                        <input type="text" name="fieldPlaceholder_{{ $i }}" class="form-control"  placeholder="John Doe">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="">Validation</label>
+                                        <div>
 
-                                    <input type="checkbox" id="inlineCheckbox1" value="option1"> Required
+                                            <input type="checkbox" id="inlineCheckbox1" value="option1"> Required
 
-                                    <input type="checkbox" id="inlineCheckbox2" value="option2"> Alpha
+                                            <input type="checkbox" id="inlineCheckbox2" value="option2"> Alpha
 
-                                    <input type="checkbox" id="inlineCheckbox3" value="option3"> Numeric
+                                            <input type="checkbox" id="inlineCheckbox3" value="option3"> Numeric
+
+                                        </div>
+
+                                    </div>
+
 
                                 </div>
-
+                                {{--end of row builder--}}
                             </div>
-
-
+                            {{--end of panel body--}}
                         </div>
+                        {{--end of panel--}}
 
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width: 35%">
-                                    <span class="sr-only">35% Complete (success)</span>
-                                </div>
-                                <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
-                                    <span class="sr-only">20% Complete (warning)</span>
-                                </div>
-                                <div class="progress-bar progress-bar-info progress-bar-striped" style="width: 40%">
-                                    <span class="sr-only">10% Complete (danger)</span>
-                                </div>
-                            </div>
+
+
+
 
                         @endfor
 

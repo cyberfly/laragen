@@ -307,8 +307,8 @@ class GeneratorController extends Controller
 
         $selectDBs = Setting::where('user_id', Auth::user()->id)->get();
 
-        $transformer_fields = ['id','created_at'];
-        $hidden_fields = ['updated_at','deleted_at'];
+        $transformer_fields = ['id','created_at','updated_at'];
+        $hidden_fields = ['deleted_at'];
 
         $current_steps = 'select_db_table';
 
