@@ -146,11 +146,11 @@
 
                     <div class="panel panel-success">
                         <div class="panel-heading">
-                            <h3 class="panel-title">General Code Attribute</h3>
+                            <h3 class="panel-title"><button type="button" class="btn btn-primary">General Code Attribute</button></h3>
                         </div>
                         <div class="panel-body">
                             <div class="row builder_row">
-                                <div class="col-md-10">
+                                <div class="col-md-11">
                                     <div class="col-md-3">
                                         <label for="">Object Name (singular)</label>
                                         <input type="text" name="object_name" id="object_name" class="form-control"  placeholder="" value="{{ $table_parameters['object_name'] or '' }}" >
@@ -195,7 +195,7 @@
                                         {{--<button type="submit" class="btn btn-primary">Generate</button>--}}
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <div class="btn-group-vertical" role="group" aria-label="...">
                                         <button type="submit" class="btn btn-primary btn-lg">Generate</button>
                                         <button type="submit" class="btn btn-success btn-lg">Generate</button>

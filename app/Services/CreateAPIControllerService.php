@@ -59,33 +59,23 @@ class '.$this->getControllerName().' extends BaseController
         ';
 
         $indexMethodCode .= '
-        if(!empty($request->sort)) {
-            
-            $sort_by = substr($request->sort, 0, 1);
-            
-            if($sort_by===\'-\') {
-                $sort_by = \'asc\';
-            }
-            else {
-                $sort_by = \'desc\';
-            }
-            
-            $sort_by_column = ltrim($request->sort, "- ");
-            
-            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy($sort_by_column, $sort_by);
-        }
-        else {
-            '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy(\'created_at\', \'desc\');
-        }
+        //sort default DESC, else by sort request
+        $order_by = (substr($request->sort, 0, 1)!=\'-\') ? \'desc\' : \'asc\';
         
-        $limit = $request->limit;
+        //sort default by id column, else by sort request
+        $order_by_column = ltrim($request->input(\'sort\', \'id\'), "- ");
+        
+        '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->orderBy($order_by_column, $order_by);
+        
+        $limit = $request->input(\'limit\', 50);
         
         ';
 
-        $indexMethodCode .= $this->getPluralVariable().' = '.$this->getPluralVariable().'->paginate($limit, 50);';
+        $indexMethodCode .= $this->getPluralVariable().' = '.$this->getPluralVariable().'->paginate($limit);';
 
         $indexMethodCode .= '
         
+        //append other request into pagination url
         '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->appends($request->except(\'page\'));
         
         return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
