@@ -41,7 +41,7 @@ class '.$this->getModelName().' extends Model
     
     ];
     
-    //belongsTo relationship
+    //relationship
     
     ';
 
@@ -62,6 +62,7 @@ class '.$this->getModelName().' extends Model
         $relationship_code = '';
 
         $db_relationships = request()->session()->get('db_relationships');
+        $db_hasmany_relationships = request()->session()->get('db_hasmany_relationships');
         $table_relationships = $db_relationships[$this->getTableName()];
 
         foreach ($table_relationships as $relationship) {
@@ -71,6 +72,19 @@ class '.$this->getModelName().' extends Model
     
     ';
         }
+
+        if (isset($db_hasmany_relationships[$this->getModelName()])) {
+            $table_hasmany_relationships = $db_hasmany_relationships[$this->getModelName()];
+
+            foreach ($table_hasmany_relationships as $relationship) {
+                $relationship_code .= 'public function '.$relationship['relationship_name'].'(){
+        return $this->'.$relationship['relationship_type'].'('.$relationship['relationship_class'].'::class);
+    }
+    
+    ';
+            }
+        }
+
 
         return $relationship_code;
     }

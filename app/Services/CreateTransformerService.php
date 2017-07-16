@@ -118,11 +118,23 @@ class '.$this->getTransformerName().' extends TransformerAbstract
         $transformer_includes = '';
 
         $db_relationships = request()->session()->get('db_relationships');
+        $db_hasmany_relationships = request()->session()->get('db_hasmany_relationships');
         $table_relationships = $db_relationships[$this->getTableName()];
 
         foreach ($table_relationships as $relationship) {
             $transformer_includes .= '\''.$relationship['relationship_name'].'\','. "\n\t\t";
         }
+
+        if (isset($db_hasmany_relationships[$this->getModelName()])) {
+
+            $table_hasmany_relationships = $db_hasmany_relationships[$this->getModelName()];
+
+            foreach ($table_hasmany_relationships as $relationship) {
+                $transformer_includes .= '\''.$relationship['relationship_name'].'\','. "\n\t\t";
+            }
+        }
+
+        $transformer_includes = rtrim($transformer_includes, "\n\t\t ");
 
         return $transformer_includes;
     }
@@ -133,6 +145,7 @@ class '.$this->getTransformerName().' extends TransformerAbstract
         $relationship_code = '';
 
         $db_relationships = request()->session()->get('db_relationships');
+        $db_hasmany_relationships = request()->session()->get('db_hasmany_relationships');
         $table_relationships = $db_relationships[$this->getTableName()];
 
 
@@ -151,6 +164,29 @@ class '.$this->getTransformerName().' extends TransformerAbstract
     }
     
     ';
+        }
+
+        if (isset($db_hasmany_relationships[$this->getModelName()])) {
+
+            $table_hasmany_relationships = $db_hasmany_relationships[$this->getModelName()];
+
+            foreach ($table_hasmany_relationships as $relationship) {
+                $relationship_code .= '
+    public function include'.$this->getPluralString($relationship['relationship_class']).'('.$this->getModelName().' '.$this->getSingularVariable().'){
+        
+        $'.$relationship['relationship_name'].' = '.$this->getSingularVariable().'->'.$relationship['relationship_name'].';
+        
+        if(!$'.$relationship['relationship_name'].'){
+            return $this->null();
+        }
+        else{
+            return $this->collection($'.$relationship['relationship_name'].', new '.$relationship['relationship_class'].'Transformer());
+        }
+    }
+    
+    ';
+            }
+
         }
 
         return $relationship_code;

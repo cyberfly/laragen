@@ -27,12 +27,7 @@ trait GeneratorParameter
 
         //get variable name
 
-        if ($this->checkSpecialPlural($table_name)) {
-            $new_table_name = str_replace('ies','y',$table_name);
-        }
-        else{
-            $new_table_name = rtrim($table_name, "s ");
-        }
+        $new_table_name = $this->getSingularString($table_name);
 
         $variable_name = strtolower($new_table_name);
 
@@ -103,24 +98,25 @@ trait GeneratorParameter
     {
         $exp_table_name = explode('_', $new_table_name);
 
-        $this->apiRouteName = $new_table_name.'/{'.$new_table_name.'_id}';
+        $this->apiRouteName = $new_table_name . '/{' . $new_table_name . '_id}';
 
         if (!empty($exp_table_name)) {
 
-            if (sizeof($exp_table_name)===2) {
+            if (sizeof($exp_table_name) === 2) {
 
-                $this->apiRouteName = $exp_table_name[0].'/{'.$exp_table_name[0].'_id}/'.$exp_table_name[1].'/{'.$exp_table_name[1].'_id}';
+                $this->apiRouteName = $exp_table_name[0] . '/{' . $exp_table_name[0] . '_id}/' . $exp_table_name[1] . '/{' . $exp_table_name[1] . '_id}';
 
-            }
-            else if (sizeof($exp_table_name)===3) {
+            } else {
+                if (sizeof($exp_table_name) === 3) {
 
-                $this->apiRouteName = $exp_table_name[1].'/{'.$exp_table_name[1].'_id}/'.$exp_table_name[2].'/{'.$exp_table_name[2].'_id}';
+                    $this->apiRouteName = $exp_table_name[1] . '/{' . $exp_table_name[1] . '_id}/' . $exp_table_name[2] . '/{' . $exp_table_name[2] . '_id}';
+                }
             }
 
         }
     }
 
-    public function setSingularVariable($variable_name, $singular_variable_name='')
+    public function setSingularVariable($variable_name, $singular_variable_name = '')
     {
         if (!empty($singular_variable_name)) {
             $this->singularVariableRecord = $singular_variable_name;
@@ -129,18 +125,13 @@ trait GeneratorParameter
         }
     }
 
-    public function setPluralVariable($variable_name, $plural_variable_name='')
+    public function setPluralVariable($variable_name, $plural_variable_name = '')
     {
         if (!empty($plural_variable_name)) {
             $this->pluralVariableRecord = $plural_variable_name;
         } else {
-            if ($this->checkSpecialSingular($variable_name)) {
-                $variable_name = rtrim($variable_name, "y ");
-                $this->pluralVariableRecord = '$' . $variable_name . 'ies';
-            }
-            else {
-                $this->pluralVariableRecord = '$' . $variable_name . 's';
-            }
+            $variable_name = $this->getPluralString($variable_name);
+            $this->pluralVariableRecord = '$' . $variable_name;
         }
     }
 
@@ -158,14 +149,8 @@ trait GeneratorParameter
         if (!empty($views_name)) {
             $this->viewsName = $views_name;
         } else {
-
-            if ($this->checkSpecialSingular($variable_name)) {
-                $variable_name = rtrim($variable_name, "y ");
-                $this->viewsName = $variable_name . 'ies';
-            }
-            else{
-                $this->viewsName = $variable_name . 's';
-            }
+            $variable_name = $this->getPluralString($variable_name);
+            $this->viewsName = $variable_name;
         }
     }
 
@@ -334,6 +319,81 @@ trait GeneratorParameter
             return true;
         }
 
+        if ($check_special_singular == 's') {
+            return true;
+        }
+
         return false;
+    }
+
+    //get single string from given plural string
+
+    public function getSingularString($string)
+    {
+        $check_special_plural = substr($string, -3);
+
+        if ($check_special_plural === 'ies') {
+            $singular_string = str_replace('ies', 'y', $string);
+        }
+        else if($check_special_plural === 'ses') {
+            $singular_string = substr($string, 0, -2);
+        }
+        else {
+            $singular_string = rtrim($string, "s ");
+        }
+
+        return $singular_string;
+    }
+
+    //get plural string from given single string
+
+    public function getPluralString($string)
+    {
+        $plural_string = $string;
+        $check_special_singular = substr($string, -1);
+
+        if ($check_special_singular == 'y') {
+            $string = rtrim($string, "y ");
+            $plural_string = $string . 'ies';
+        } else {
+            if ($check_special_singular == 's') {
+                $plural_string = $plural_string . 'es';
+            } else {
+                $plural_string = $plural_string . 's';
+            }
+        }
+
+        return $plural_string;
+    }
+
+    //convert Model to hasMany relationship name
+
+    public function modelToHasManyRelationship($model_name)
+    {
+        $relationship_name = $model_name;
+
+        //convert Class camel case to snake case
+
+        $relationship_name = $this->camelToSnakeCase($relationship_name);
+
+        //convert back to method snake case
+
+        $relationship_name = lcfirst(implode('', array_map('ucfirst', explode('_', $relationship_name))));
+
+        $relationship_name = $this->getPluralString($relationship_name);
+
+        return $relationship_name;
+    }
+
+    //convert camel case to snake case
+
+    private function camelToSnakeCase($string)
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $string, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
 }

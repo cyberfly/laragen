@@ -118,9 +118,7 @@ class GeneratorController extends Controller
 
     public function connectdb(Request $request)
     {
-
         $defaultConnection = Config::get('database.connections');
-
 
         //Set values of default config to the value of request
         $defaultConnection['mysql-mod']['host'] = $request->db_host;
@@ -152,7 +150,6 @@ class GeneratorController extends Controller
                 //populate dropdown table input
                 array_push($selectTable, $table->$sql_show_table);
 
-
                 //populate global fields array to determine all relationship
 
                 $tableColumns = DB::connection('mysql-mod')->select('SHOW COLUMNS FROM ' . $table->$sql_show_table);
@@ -168,9 +165,44 @@ class GeneratorController extends Controller
 
             }
 
+            //get hasMany/hasOne relationship
+
+            $db_hasmany_relationships = [];
+
+            foreach ($db_relationships as $key => $relationships) {
+
+                $table_name = $key;
+
+                $this->setDatabaseTableParameter($table_name);
+
+                $model_name = $this->getModelName();
+
+                foreach ($relationships as $relationship) {
+
+                    if ($relationship['relationship_type'] === 'belongsTo') {
+
+                        $class_name = $relationship['relationship_class'];
+                        $parent_relationship = 'hasMany';
+
+                        $db_hasmany_relationships[$class_name][] = [
+                            'foreign_key'=>'id',
+                            'relationship_type'=> $parent_relationship,
+                            'relationship_name'=> $this->modelToHasManyRelationship($model_name),
+                            'relationship_class'=>$model_name
+                        ];
+
+                    }
+
+                }
+            }
+
             //store db_relationships in session to use later in service/trait/controller
 
             $request->session()->put('db_relationships', $db_relationships);
+
+            //store db_hasmany_relationships in session to use later in service/trait/controller
+
+            $request->session()->put('db_hasmany_relationships', $db_hasmany_relationships);
 
             //store db table parameters in session to use later in service/trait/controller
             $request->session()->put('db_table_parameters', $db_table_parameters);
