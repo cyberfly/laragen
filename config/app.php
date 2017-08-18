@@ -183,7 +183,7 @@ return [
 
          Vinkla\Hashids\HashidsServiceProvider::class,
          Laracasts\Flash\FlashServiceProvider::class,
-
+         Fathur\Laragendb\LaragenDBServiceProvider::class,
     ],
 
     /*
