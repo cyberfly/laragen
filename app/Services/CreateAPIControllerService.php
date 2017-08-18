@@ -60,7 +60,7 @@ class '.$this->getControllerName().' extends BaseController
 
         $indexMethodCode .= '
         //sort default DESC, else by sort request
-        $order_by = (substr($request->sort, 0, 1)!=\'-\') ? \'desc\' : \'asc\';
+        $order_by = (substr($request->sort, 0, 1)!=\'-\') ? \'asc\' : \'desc\';
         
         //sort default by id column, else by sort request
         $order_by_column = ltrim($request->input(\'sort\', \'id\'), "- ");
@@ -77,6 +77,48 @@ class '.$this->getControllerName().' extends BaseController
         
         //append other request into pagination url
         '.$this->getPluralVariable().' = '.$this->getPluralVariable().'->appends($request->except(\'page\'));
+        
+        return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
+    }   ';
+
+        return $indexMethodCode;
+
+    }
+
+    private function writeIndexMethodWithNewQuery()
+    {
+
+
+        $indexMethodCode = '
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function index(Request $request)
+    {
+        '.$this->getPluralVariable().' = '.$this->getModelName().'::query();
+        ';
+
+        $indexMethodCode .= '
+        //sort default DESC, else by sort request
+        $order_by = (substr($request->sort, 0, 1)!=\'-\') ? \'asc\' : \'desc\';
+        
+        //sort default by id column, else by sort request
+        $order_by_column = ltrim($request->input(\'sort\', \'id\'), "- ");
+        
+        '.$this->getPluralVariable().'->orderBy($order_by_column, $order_by);
+        
+        $limit = $request->input(\'limit\', 50);
+        
+        ';
+
+        $indexMethodCode .= $this->getPluralVariable().'->paginate($limit);';
+
+        $indexMethodCode .= '
+        
+        //append other request into pagination url
+        '.$this->getPluralVariable().'->appends($request->except(\'page\'));
         
         return $this->response->paginator('.$this->getPluralVariable().', new '.$this->getTransformerName().'());
     }   ';

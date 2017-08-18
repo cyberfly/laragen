@@ -151,8 +151,8 @@ class '.$this->getTransformerName().' extends TransformerAbstract
 
         foreach ($table_relationships as $relationship) {
             $relationship_code .= '
-    public function include'.$relationship['relationship_class'].'('.$this->getModelName().' '.$this->getSingularVariable().'){
-        
+    public function include'.$relationship['relationship_class'].'('.$this->getModelName().' '.$this->getSingularVariable().')
+    {
         $'.$relationship['relationship_name'].' = '.$this->getSingularVariable().'->'.$relationship['relationship_name'].';
         
         if(!$'.$relationship['relationship_name'].'){
@@ -172,8 +172,8 @@ class '.$this->getTransformerName().' extends TransformerAbstract
 
             foreach ($table_hasmany_relationships as $relationship) {
                 $relationship_code .= '
-    public function include'.$this->getPluralString($relationship['relationship_class']).'('.$this->getModelName().' '.$this->getSingularVariable().'){
-        
+    public function include'.$this->getPluralString($relationship['relationship_class']).'('.$this->getModelName().' '.$this->getSingularVariable().')
+    {
         $'.$relationship['relationship_name'].' = '.$this->getSingularVariable().'->'.$relationship['relationship_name'].';
         
         if(!$'.$relationship['relationship_name'].'){
