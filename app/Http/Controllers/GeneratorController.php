@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Project;
 use App\Services\CreateAPIControllerService;
 use App\Services\CreateAPIRouteService;
 use App\Services\CreateFormRequestService;
@@ -17,6 +18,7 @@ use DB;
 use App\Setting;
 use Auth;
 use Illuminate\Support\Facades\Crypt;
+use GuzzleHttp\Client;
 
 class GeneratorController extends Controller
 {
@@ -114,6 +116,82 @@ class GeneratorController extends Controller
     public function display()
     {
 
+    }
+
+    public function scaffoldSelection(Request $request)
+    {
+        $project_id = $request->project;
+        $project = Project::find($project_id);
+        $api_url = $project->api_url;
+
+        $client = new Client();
+        $result = $client->get($api_url, []);
+
+        $db_relationships = [];
+        $db_table_parameters = [];
+        $selectTable = [];
+        $db_hasmany_relationships = [];
+
+        if ($result->getStatusCode() == 200) {
+
+            $result_body = json_decode($result->getBody());
+
+
+
+            foreach ($result_body as $table => $columns) {
+
+                //populate dropdown table input
+                array_push($selectTable, $table);
+
+                //populate global fields array to determine all relationship
+
+//                $tableColumns = DB::connection('mysql-mod')->select('SHOW COLUMNS FROM ' . $table);
+//                $db_relationships[$table] = $this->getTablesRelationship($tableColumns);
+
+                //set table parameters
+
+                $this->setDatabaseTableParameter($table);
+
+                //get generated table parameters
+
+                $db_table_parameters[$table] = $this->getGeneratorParameters();
+                
+            }
+
+        }
+
+        //store db_relationships in session to use later in service/trait/controller
+
+        $request->session()->put('db_relationships', $db_relationships);
+
+        //store db_hasmany_relationships in session to use later in service/trait/controller
+
+        $request->session()->put('db_hasmany_relationships', $db_hasmany_relationships);
+
+        //store db table parameters in session to use later in service/trait/controller
+        $request->session()->put('db_table_parameters', $db_table_parameters);
+
+        //flash session item
+//        $request->session()->put('connection', $defaultConnection);
+        $request->session()->put('selectTable', $selectTable);
+
+        //boilerplate inputCheck variable
+        $inputCheck = array();
+        for ($i = 0; $i < 10; $i++) {
+            array_push($inputCheck, "");
+        }
+
+        $selectDBs = Setting::where('user_id', Auth::user()->id)->get();
+
+        $transformer_fields = [];
+        $hidden_fields = [];
+
+        $current_steps = 'load_db_connection';
+
+        flash()->overlay("Successfully connected to '" . $request->db_name . "''<br>Please proceed by selecting the table of your choice for code generation",
+            'Success');
+
+        return view('generator.dbbuilder', compact('selectDBs', 'selectTable', 'fieldTotal', 'inputCheck', 'tableColumns', 'hidden_fields','transformer_fields','current_steps'));
     }
 
     public function connectdb(Request $request)

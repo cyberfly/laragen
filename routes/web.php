@@ -43,12 +43,16 @@ Route::get('/form', function () {
 
 Route::get('/populateTableForm/{id}/get', 'GeneratorController@populateTableForm');
 
+Route::resource('projects', 'ProjectController');
 Route::resource('settings', 'SettingController');
 
 Route::post('/build', 'GeneratorController@generate');
 
 Auth::routes();
 
+Route::get('/scaffold/selecttable', 'ScaffoldController@scaffoldSelection')->name('scaffold.select');
+Route::get('/scaffold/selectcolumns', 'ScaffoldController@scaffoldColumnSelection')->name('scaffold.column');
+Route::post('/scaffold/generate', 'ScaffoldController@generate')->name('scaffold.generate');
 Route::post('/connectdb', 'GeneratorController@connectdb');
 
 Route::post('/selectTable', 'GeneratorController@populateField');
